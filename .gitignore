@@ -1,0 +1,6 @@
+.vscode/settings.json
+*.luac
+/documents
+/LOGS
+/batfiles
+*.cfg
