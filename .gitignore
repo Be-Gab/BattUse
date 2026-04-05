@@ -1,6 +1,14 @@
 .vscode/settings.json
 *.luac
 /documents
+
+#LOGS dir empty
 /LOGS/*
+!/LOGS/.gitkeep
+
+#batfiles dir empty
 /batfiles/*
+!/batfiles/.gitkeep
+
+
 *.cfg
