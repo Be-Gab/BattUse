@@ -1,49 +1,35 @@
-# BattUseWidget
-Version: 39.03.2026. 0.86 - Test version
+# BattUse Widget
 
 In its current state, in the absence of a sufficient number of tests, live use of the widget is not recommended.
 
-Minimum required EdgeTx version: 2.11.5
-Widget uses LVGL graphical display.
+Minimum required EdgeTx version: 2.
+**Minimum required EdgeTx version:** 2.11.5 (recommended: 2.12.0)  
+This widget uses LVGL for its graphical interface.  
 Tested during development on a Radiomaster TX16S radio.
 
-## Application purpose / services
-- Battery flight counting
-- Creating a detailed flight log
-- Customizable support for flight to mAh value
-- Backup on-board battery management
-- Warning when events occur
+Please read the [Wiki page](https://github.com/Be-Gab/BattUse/wiki) !
 
-See WikiPedia for details
+
+## Purpose / Features
+
+- Flight count per battery  
+- Flight logging  
+- Customizable mAh-based flight time support  
+- Backup battery management  
+- Warnings on specific events
+- Many Widget Display
 
 ## A few words about me
-I only fly helicopters, I made the widget for myself. Now the BattUse widget is in a state,
-that I decided to share, maybe someone else might be interested. I see several opportunities for further development in it.
-I am happy to listen to constructive, cultured criticism. This is my first published project, so take it easy :-)
 
+I only fly helicopters, and I created this widget for my own use.  
+I have now reached a stage with the BattUse widget where I decided to share it — maybe it will be useful for others too.  
+I see several possibilities for further development.  
+I welcome constructive and polite feedback.  
+This is my first published project, so please be gentle :-)
 
+## Installation
 
+Install the widget the same way as any other EdgeTx widget:  
+Extract the contents of the downloaded `.zip` file into the `/WIDGETS/BattUse` folder on your radio.
+There are a few more steps to take, read the [Wiki page](https://github.com/Be-Gab/BattUse/wiki) !
 
----------------------------
-
-# BattUse Widget
-Verzió: 2026.03.39. 0.86 - Teszt verzió
-
-A widget jelen állapotában, megfelelő számú teszt hiányában, élesben történő használata nem javasolt.
-
-Minimum szükséges EdgeTx verzió: 2.11.5
-A Widget LVGL grafikai megjelenítést használ.
-Fejlesztés során tesztelve Radiomaster TX16S rádión.
-
-## Alkalmazás célja / szolgáltatásai
-- Akkumulátorok repülés számlálása
-- Részletes repülés napló készítése
-- mAh értékre történő repülés személyre szabható támogatása
-- Backup fedélzeti akkumulátor kezelése
-- Figyelmeztetés események bekövetkezésekor
-
-Részleteket lásd a WikiPedia oldalon
-
-## Pár mondat rólam
-Kizárólag helikoptereket repítek, a widgetet magamnak készítettem. Most olyan állapotban van a BattUse widget, hogy úgy döntöttem megosztom, talán mást is érdekelhet. Több tovább fejlesztési lehetőséget is látok benne.
-Az építő jellegű, kulturált kritikát szívesen meghallgatom. Ez az első publikált projektem, szóval csak kíméletesen :-)
