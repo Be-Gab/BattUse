@@ -2,7 +2,6 @@
 
 In its current state, in the absence of a sufficient number of tests, live use of the widget is not recommended.
 
-Minimum required EdgeTx version: 2.
 **Minimum required EdgeTx version:** 2.11.5 (recommended: 2.12.0)  
 This widget uses LVGL for its graphical interface.  
 Tested during development on a Radiomaster TX16S radio.
