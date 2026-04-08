@@ -1057,6 +1057,8 @@ function widget.logViewPage(widget, options)
 	local logButtons = {};
 	local key, row
 	local logList = logLines.getTable()
+	
+	app.d.printAssoc( "logViewPage() logList" ,  logList )
 
 	-- app.d.log( "math.min( #logList , LOG_MAX_ROW_COUNT )" , math.min( #logList , LOG_MAX_ROW_COUNT ) , "logViewPage()" )
 
