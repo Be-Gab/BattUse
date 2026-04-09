@@ -616,7 +616,7 @@ function dispMaxAmp( widget )
 											if flyData.saved.isSaved then;
 												a = flyData.saved.maxAmp;
 											else;
-												a = flyData.maxAmp or "-";
+												a = flyData.maxAmp;
 											end;
 											return a ;
 										end	

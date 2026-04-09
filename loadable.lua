@@ -1057,6 +1057,8 @@ function widget.logViewPage(widget, options)
 	local logButtons = {};
 	local key, row
 	local logList = logLines.getTable()
+	
+	-- app.d.printAssoc( "logViewPage() logList" ,  logList )
 
 	-- app.d.log( "math.min( #logList , LOG_MAX_ROW_COUNT )" , math.min( #logList , LOG_MAX_ROW_COUNT ) , "logViewPage()" )
 
@@ -1421,7 +1423,7 @@ function widget.widgetPage( widget, options )
 	elseif options.Display == 3 then				--	Fly Time
 		dispFlyTime( widget )
 
-	elseif options.Display == 4 then			--	Landing target	
+	elseif options.Display == 4 then				--	Landing target	
 		dispLandingTarget( widget )
 
 	elseif options.Display == 5 then				--	Last Use

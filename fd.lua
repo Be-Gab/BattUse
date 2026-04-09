@@ -296,8 +296,7 @@ end
 function flyData.Save( wgt )
 	local mt = model.getTimer( flyData.timerID )
 	local flightTime = math.abs(mt.start - mt.value  )
-	
-	
+
 	flyData.saved.isSaved = true
 	
 	-- id,capacity,product,cells,earlyCount,count,firstStartDate,retireDate,lastStartDate
@@ -496,8 +495,9 @@ function flyData.flyLogWrite(wgt)
 	
 	table.insert( line , addQ( flyData.saved.flightTime ) )
 	
-	-- Battery		
+	
 	if flyData.saved.batteryID  ~= nil then
+		-- Battery Selected		
 	
 		table.insert( line , addQ( flyData.saved.batteryID ) )
 		table.insert( line , addQ( flyData.saved.batteryProduct ) )
@@ -506,6 +506,7 @@ function flyData.flyLogWrite(wgt)
 		table.insert( line , flyData.saved.batAllFlightCount  )
 	
 	else
+		-- Battery NOT Selected		
 		table.insert( line , addQ( "" ) )	-- batteryID 
 		table.insert( line , addQ( "" ) )	-- batteryProduct
 		table.insert( line , addQ( "" ) )	-- batAllFlightCount
@@ -529,7 +530,7 @@ function flyData.flyLogWrite(wgt)
 	-- app.d.printAssoc( "flyLogWrite(), flyData.saved" , flyData.saved )
 	
 	if flyData.saved.mAhUsed == nil then
-		table.insert( line ,  "" )		-- N/A
+		table.insert( line ,  0 )		-- N/A
 	else
 		table.insert( line , string.format("%d", flyData.saved.mAhUsed ) )
 	end 
@@ -537,7 +538,7 @@ function flyData.flyLogWrite(wgt)
 
 	-- Max mAh
 	if flyData.saved.maxAmp == nil then
-		table.insert( line ,  "" )		-- N/A
+		table.insert( line ,  0 )		-- N/A
 	else
 		table.insert( line , string.format("%d", flyData.saved.maxAmp ) )
 	end 
@@ -793,7 +794,7 @@ function flyData.flightEndProcedure( wgt )
 					batFile.setField( flyData.selectedBatteryRecNum , "firstStartDate" , flyData.flightStartTime )
 				end 
 				
-				app.d.log( "flightEndProcedure" , "writecsv" )
+				-- app.d.log( "flightEndProcedure" , "writecsv" )
 				batFile.writeCsv()
 				
 			end
