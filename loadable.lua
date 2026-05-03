@@ -321,14 +321,19 @@ end
 
 --local initialized = false;
 function widget.update( widget, options )
-
+	
 	-- app.d.log( "update() .w", widget.zone.w , "widget.update( widget, options )" )
 	
    if (lvgl.isFullScreen() or lvgl.isAppMode()) then
-		widget.switchPage( PAGE_BATSELECT , widget, options )
+		if isErrorInInputs() then
+			widget.switchPage( PAGE_SETINPUT , widget, options )
+		else
+			widget.switchPage( PAGE_BATSELECT , widget, options )
+		end
 	else
 	
 		if isErrorInInputs() then
+			app.d.log( "update() ", "isError found!" , "widget.update( widget, options )" )
 			lvgl.clear()
 			dispError( widget )
 		else
@@ -617,7 +622,7 @@ function widget.setInputPage(widget, options)
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
-						{	type = "label", text = "Max mAh " },
+						{	type = "label", text = "Max AMP " },
 						{	type = "source",   filter = srcFilter, 
 							get = (function( ) return settings.getMaxMAhSource(   ); end), 
 							set = (	function(s)        
