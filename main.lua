@@ -20,7 +20,7 @@ app.dir = "/WIDGETS/BattUse/"
 
 local settings	= {}
 local flyData	= {}
-local objLoaded = false
+local loadedModel = ""
 
 local batFile	= {}
 
@@ -47,13 +47,14 @@ local function create(zone, options )
 	local mi = model.getInfo()
 	local modelConfigFile = string.format( "%s/%s.cfg"   , app.dir , mi.name )
 	local errMsg
+
+	print( ":BattUse: Create() Widget Start. Model:" .. mi.name  )
 	
 	if (lvgl == nil) then
 		return {zone = zone, options = options, name = app.name }
 	end
 	
-	if  not objLoaded then
-	
+	if loadedModel ~= mi.name then
 		local dbg 
 		dbg,  errMsg = loadScript( app.dir .. "d.lua" )( app.name ) 
 		app.d = dbg
@@ -69,6 +70,7 @@ local function create(zone, options )
 		-- app.d.log( "flyData.selBatteryName" , flyData.selBatteryName , "create()" )
 
 		-- ================================================================================
+		
 		flyData, errMsg = loadScript( app.dir .. "fd.lua" )( app , batFile ) 
 
 		if errMsg then
@@ -76,7 +78,9 @@ local function create(zone, options )
 			widget.errMsg = errMsg
 		end
 
-		 objLoaded = true
+		loadedModel = mi.name
+		print( ":BattUse: Create() Loaded Model:" .. loadedModel  )
+		
 	end
 	
 	-- ================================================================================

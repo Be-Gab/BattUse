@@ -69,9 +69,9 @@ local function createDemoBatFile()
 	-- create file with head
 	f=io.open( BATTFILES_DIR .. "/" .. DEMO_BATT_FILENAME ,"a")
 	io.write( f , "id,capacity,product,cells,maxVolt,earlyCount,count,firstStartDate,retireDate,lastStartDate" .. "\n"  )
-	io.write( f , "\"Bat1\",5000,\"Prod\",12,4.2,20,150,\"2019-09-09\",\"\",\"2025.02.24. 16:33:26\"" .. "\n"  )
-	io.write( f , "\"Bat2\",5000,\"Prod B\",12,4.35,20,27,\"2019-09-09\",\"\",\"2025.04.23. 16:19:22\"" .. "\n"  )
-	io.write( f , "\"Bat3\",5000,\"Prod CC\",12,4.2,200, 1,\"2019-09-09\",\"2023-09-09\",\"2023.09.01. 11:11:22\"" .. "\n"  )	
+	io.write( f , "\"Bat1\",5000,\"Prod A\",12,4.2,20,150,\"20190909120000\",\"\",\"20250224163326\"" .. "\n"  )
+	io.write( f , "\"Bat2\",5000,\"Prod B\",12,4.35,20,27,\"20190909120000\",\"\",\"20250423161922\"" .. "\n"  )
+	io.write( f , "\"Bat3\",5000,\"Prod B\",12,4.2,200, 1,\"20190909120000\",\"20230909\",\"20230901111122\"" .. "\n"  )	
 	
 	io.close(f)
 	
@@ -139,6 +139,8 @@ function settings.settingsLoad()
 		data = cfgFile.getRow( 1 )
 		
 	end	
+	
+	-- app.d.printAssoc( "data" , data )
 	
 	-- Input page	
 	settings.batVoltSource			= data.batVoltSource	or 0

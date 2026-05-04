@@ -1093,6 +1093,7 @@ function flyData.mAhActionClear()
 end
 
 function flyData.readBatteryFile( batteryFile )
+	app.d.log( "batteryFile" , batteryFile , "flyData.readBatteryFile()" )
 	batFile.readCsv( batteryFile )
 end
 
