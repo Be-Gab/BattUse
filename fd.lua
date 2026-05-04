@@ -625,18 +625,24 @@ function flyData.onBatteryConnectEvent(wgt, batVolt)
    -- d.log( "onBatteryConnectEvent() -> batVolt" , batVolt )
 
 	--  PlaySound
-	app.d.log( "play => BATTERY_ONCONNECT_SOUND:" , BATTERY_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
+	-- app.d.log( "play => BATTERY_ONCONNECT_SOUND:" , BATTERY_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
 	playFile( BATTERY_ONCONNECT_SOUND )
 	
 	-- playNumber(value, unit [, attributes])
 	-- 13 = UNIT_PERCENT
-	app.d.log( "play => Percent :" , batVolt , "flyData.onBatteryConnectEvent()"  )
+	-- app.d.log( "play => Percent :" , batVolt , "flyData.onBatteryConnectEvent()"  )
 	playNumber( p, UNIT_PERCENT )
 
-	if flyData.warnWhenBatConnect then
+	-- Warn ON and battery not selected
+	if flyData.warnWhenBatConnect and 
+		not flyData.batteryRec.id
+		-- #flyData.batteryRec == 0    
+		then
 	
 		--  PlaySound
 		app.d.log( "play => BATTERY_WARN_ONCONNECT_SOUND:" , BATTERY_WARN_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
+		app.d.log( "flyData.batteryRec.id:" ,  flyData.batteryRec.id , "flyData.onBatteryConnectEvent()"  )
+		app.d.log( "not flyData.batteryRec.id:" , not flyData.batteryRec.id , "flyData.onBatteryConnectEvent()"  )
 		playFile( BATTERY_WARN_ONCONNECT_SOUND )
 
 	end
@@ -650,8 +656,8 @@ function flyData.onBatteryConnectEvent(wgt, batVolt)
 	flyData.mAhCalcFlyable()	
 
 
-   app.d.log( "flyData.batVoltStart" , flyData.batVoltStart , "onBatteryConnectEvent()" )
-   app.d.log( "flyData.modelCells" , flyData.modelCells , "onBatteryConnectEvent()" )
+   -- app.d.log( "flyData.batVoltStart" , flyData.batVoltStart , "onBatteryConnectEvent()" )
+   -- app.d.log( "flyData.modelCells" , flyData.modelCells , "onBatteryConnectEvent()" )
 	
 end 
 
