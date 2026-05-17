@@ -389,8 +389,8 @@ function widget.pageHead( screenType, subUi, widget, options )
 		-- app.d.log( "flyData.quickSelChannel?" , "==0" , "widget.pageHead()" )
 	-- end
 	
-	local btnInputs	=	{ type = "button", text = "Inputs" ,
-									w = 80, h = btnHeigh ,
+	local btnInputs	=	{ type = "button", text = "Input" ,
+									w = 55, h = btnHeigh ,
 									press = (function() widget.switchPage( PAGE_SETINPUT, widget, options	); end)
 								}
 	local btnSelect	=	{ type = "button", text = "Batteries" ,
@@ -399,12 +399,12 @@ function widget.pageHead( screenType, subUi, widget, options )
 									visible	= (function() return ( 0 == flyData.quickSelChannel ); end) ,
 									press		= (function() widget.switchPage( PAGE_BATSELECT, widget, options ); end)
 								}
-	local btnBehavior	=	{ type = "button", text = "Behavier" ,
-									w = 80, h = btnHeigh ,
+	local btnBehavior	=	{ type = "button", text = "Behaviour" ,
+									w = 90, h = btnHeigh ,
 									press = (function() widget.switchPage( PAGE_BEHAVIOR, widget, options ); end)
 								}
 	local btnLog		=	{ type = "button", text = "Log" ,
-									w = 40, h = btnHeigh ,
+									w = 45, h = btnHeigh ,
 									press = (function() widget.switchPage( PAGE_LOG_VIEW, widget, options ); end)
 								}
 	local btnClose		=	{ type = "button", text = "Close" ,
@@ -421,13 +421,13 @@ function widget.pageHead( screenType, subUi, widget, options )
 	elseif screenType == PAGE_SETINPUT then
 
 		headButtons = 	{	btnBehavior	,	btnSelect ,	btnLog, btnClose	}
-		subTitle		=	"Set Inputs"
+		subTitle		=	"Set Input"
 		iconFile		= app.dir .. "icon/" .. "inp.png"
 	
 	elseif screenType == PAGE_BEHAVIOR then
 
 		headButtons = 	{	btnInputs	,	btnSelect ,	btnLog, btnClose	}
-		subTitle		=	"Set Behavior"
+		subTitle		=	"Set Behaviour"
 		iconFile		= app.dir .. "icon/" .. "bhvr.png"
 		
 	elseif screenType == PAGE_LOG_VIEW then
