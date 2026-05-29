@@ -589,15 +589,14 @@ function widget.setInputPage(widget, options)
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
-						{	type = "label", text = "Battery Volt " },
+						{	type = "label", text = "Battery Voltage telemetry sensor : " },
 						{	type = "source",  filter = srcFilter, 
 							get = (function( ) return settings.getBatVoltSource(   ); end) , 
 							set = (	function(s)        
 											settings.setBatVoltSource( s ); 
 											flyData.setVoltReadSensor(s);
 										end
-									) } ,
-						{ type = "label", text = " telemetry sensor" },
+									) } 
 					}
 				}
 				,
@@ -605,16 +604,14 @@ function widget.setInputPage(widget, options)
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
-						{	type = "label", text = "Used mAh " },
+						{	type = "label", text = "Current draw telemetry sensor : " },
 						{	type = "source", filter = srcFilter, 
 							get = (function( ) return settings.getUsedMAhSource(   ); end), 
 							set = (	function(s)        
 											settings.setUsedMAhSource( s ); 
 											flyData.setmAmpSensor( settings.getUsedMAhSource() );
 										end
-									) },
-						{	type = "label", text = " telemetry sensor" },
-											  
+									) }											  
 					}
 				}
 				,	
@@ -622,15 +619,14 @@ function widget.setInputPage(widget, options)
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
-						{	type = "label", text = "Max AMP " },
+						{	type = "label", text = "Max current draw telemetry sensor : " },
 						{	type = "source",   filter = srcFilter, 
 							get = (function( ) return settings.getMaxMAhSource(   ); end), 
 							set = (	function(s)        
 											settings.setMaxMAhSource( s ); 
 											flyData.setMaxMAhSource( settings.getMaxMAhSource() );
 											end
-									) },
-						{	type = "label", text = " telemetry sensor" },
+									) }
 					}
 				}
 				,	
@@ -638,7 +634,7 @@ function widget.setInputPage(widget, options)
 					thickness	= 0 ,
 					flexFlow		= lvgl.FLOW_ROW, 
 					children		= {
-						{	type	= "label", text = "Quick Battery select channel  " },
+						{	type	= "label", text = "Battery quick select channel : " },
 						{	type	= "source",   filter = srcQS_Filter , 
 							get	= (function( ) return settings.getQuickSelChannel(); end), 
 							set	=	(	function(s)        
@@ -655,15 +651,14 @@ function widget.setInputPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					thickness = 0 ,
 					children = {
-						{	type = "label", text = "Backup Battery "},
+						{	type = "label", text = "Backup Battery Volt(s) : "},
 						{	type = "numberEdit", min = 0, max = 45, w = 60, 
 							get = (function( ) return settings.getBackupVolt(   ); end), 
 							set = (	function(v)
 											settings.setBackupVolt( v ); 
 											flyData.setBackupVolt( settings.getBackupVolt() );
 											end
-									) },
-						{	type = "label", text = " volt"},
+									) }
 					}
 				}
 				,
@@ -672,7 +667,7 @@ function widget.setInputPage(widget, options)
 					thickness = 0 ,
 					children = {
 						{	type	= "label", 
-							text	= "Battery cell "
+							text	= "Battery cell count : "
 						},
 						{	type	= "choice", 
 							-- min = 0, max = 45, 
@@ -685,9 +680,6 @@ function widget.setInputPage(widget, options)
 											flyData.setModelCells( settings.getBatCell() );
 											end
 									) 
-						},
-						{	type	= "label", 
-							text	= " count"
 						}
 					}
 				}
@@ -782,7 +774,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Landing percent" 
+							text	= "Landing percent : " 
 						},
 						{	type	= "slider",  
 							w		= 260 ,
@@ -815,7 +807,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow	= lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Log path " 
+							text	= "Log path : " 
 						},
 						{	type	= "choice",  
 							w		= 260,
@@ -842,7 +834,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Date format " },
+							text	= "Date format : " },
 						{	type	= "choice",  
 							w		= 260,
 							title	= "Select DATE format",
@@ -867,7 +859,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Battery warning when connect " 
+							text	= "Battery warning when connected : " 
 						},
 						{	type	= "toggle",  
 							get	=	(
@@ -889,7 +881,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Battery warning when disconnect on fly " 
+							text	= "Battery warning when disconnected in flight " 
 						},
 						{	type	= "toggle",  
 							get	=	(
@@ -911,7 +903,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Battery Warning when fly begin " 
+							text	= "Battery warning when flight starts " 
 						},
 						{	type	= "toggle",  
 							get	=	(
@@ -933,7 +925,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Warning when battery connecting and Volt under " 
+							text	= "Warning when battery connected under " 
 						},
 						{	type	= "numberEdit",
 							w		= 34 ,
@@ -952,7 +944,7 @@ function widget.behaviorPage(widget, options)
 										) 
 						} ,
 						{	type	= "label", 
-							text	= " %" 
+							text	= " % of total voltage" 
 						}
 					}
 				}
@@ -961,7 +953,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Battery over use warning " 
+							text	= "Battery overuse warning at " 
 						},
 						{	type	= "numberEdit",
 							w		= 34 ,
@@ -989,7 +981,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "setting", 
-							title	= "Say percent when Fly mAh reach" 
+							title	= "Report remaining capacy during flight at :" 
 						}
 					}
 				}
@@ -1017,7 +1009,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Haptic warning when overuse in every " 
+							text	= "Haptic warning when overused at every " 
 						},
 						{	type	= "numberEdit",
 							w		= 34 ,
@@ -1036,7 +1028,7 @@ function widget.behaviorPage(widget, options)
 										) 
 						},
 						{	type	= "label" ,
-							text	= " sec" 
+							text	= " secs" 
 						}
 					}
 				}
@@ -1168,7 +1160,7 @@ function widget.logViewPage(widget, options)
 																									{	type	= "label", 
 																										w		= 80,
 																										font	= SMLSIZE ,
-																										text	= "Start Time:"
+																										text	= "Flight time : "
 																									},
 																									{	type	= "label", 
 																										-- w		= 320,
@@ -1193,7 +1185,7 @@ function widget.logViewPage(widget, options)
 																									{	type	= "label", 
 																										w		= 80,
 																										font	= SMLSIZE ,
-																										text	= "Fly Time:"
+																										text	= "Duration : "
 																									},
 																									{	type	= "label", 
 																										w		= 320,
@@ -1275,7 +1267,7 @@ function widget.logViewPage(widget, options)
 																									{	type	= "label", 
 																										w		= 120,
 																										font	= SMLSIZE ,
-																										text	= "Volt at the begining:"
+																										text	= "Initial charge level : "
 																									},
 																									{	type	= "label", 
 																										w		= 280,
@@ -1301,7 +1293,7 @@ function widget.logViewPage(widget, options)
 																									{	type	= "label", 
 																										w		= 120,
 																										font	= SMLSIZE ,
-																										text	= "Volt at the end:"
+																										text	= "Final charge level : "
 																									},
 																									{	type	= "label", 
 																										w		= 280,
