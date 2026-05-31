@@ -235,7 +235,7 @@ local function buttonCreate( bat, todayUsed, widget, options )
 											color	= dateColor,
 										},
 										{	type	= "label", 
-											text	= "Start : "
+											text	= "Flight: "
 										},
 										{	type	= "label", 
 											w		= 40,
@@ -1059,7 +1059,7 @@ function widget.logViewPage(widget, options)
 
 	-- app.d.log( "math.min( #logList , LOG_MAX_ROW_COUNT )" , math.min( #logList , LOG_MAX_ROW_COUNT ) , "logViewPage()" )
 
-	for r = #logList , #logList - math.min( #logList , LOG_MAX_ROW_COUNT )+1, -1 do
+	for r = #logList , #logList - math.min( #logList , LOG_MAX_ROW_COUNT ) +1, -1 do
 
 		logButtons[#logButtons+1] = 
 			{
@@ -1206,10 +1206,15 @@ function widget.logViewPage(widget, options)
 																								flexPad	= 0 ,
 																								align		= LEFT + VCENTER,		
 																								children	=	{
+																									-- {	type	= "label", 
+																										-- w		= 80,
+																										-- font	= SMLSIZE ,
+																										-- text	= "Amper:"
+																									-- },
 																									{	type	= "label", 
 																										w		= 80,
 																										font	= SMLSIZE ,
-																										text	= "Amper:"
+																										text	= "Current draw:"
 																									},
 																									{	type	= "label", 
 																										w		= 320,
@@ -1217,8 +1222,10 @@ function widget.logViewPage(widget, options)
 																										font	= MIDSIZE ,
 																										text	=	(	
 																														function() 
-																															return "Used: " ..
-																																	 logList[ logLineId ].mAmpFly .. " mA, Max: " ..
+																															return 
+																																	-- "Current draw: " ..
+																																	 logList[ logLineId ].mAmpFly .. " mA," ..
+																																	 " / Max: " ..
 																																	 logList[ logLineId ].maxAmp .. " A";
 																														end
 																													) 
