@@ -119,13 +119,13 @@ end
 
 -- Segédfüggvény: Komplex gomb leírás generálása
 local function buttonCreate( bat, todayUsed, widget, options )
-	local BTN_HEIGHT = 60
+	local BTN_HEIGHT = 60  * lvgl.LCD_SCALE
 	local BTN_WIDTH = widget.zone.w * 0.9	
-	local BTN_LEFT = BTN_WIDTH * 0.3 -- 250 --89
-	local BTN_CONT_HEIGHT	= BTN_HEIGHT -7 -- -7
-	local BTN_CONT_WIDTH	= BTN_WIDTH - BTN_LEFT -- -14
+	local BTN_LEFT = BTN_WIDTH * 0.3
+	local BTN_CONT_HEIGHT	= BTN_HEIGHT -7 
+	local BTN_CONT_WIDTH	= BTN_WIDTH - BTN_LEFT 
 	
-	local bat_also		= ( bat.count + bat.earlyCount ) .. " Start"
+	local bat_also		= ( bat.count + bat.earlyCount ) .. " Flight"
 	local bat_felso	= bat.product .. " " .. bat.capacity .. " mAh " .. bat.cells .. "S "
 	local hv, dateColor
 	
@@ -192,7 +192,7 @@ local function buttonCreate( bat, todayUsed, widget, options )
 						{	type	= "vline", w=2, h=BTN_HEIGHT-11, color=COLOR_THEME_SECONDARY2 } 
 						,
 						{	type	= "box" , 				-- RIGHT
-							w		= BTN_CONT_WIDTH -30 ,
+							w		= BTN_CONT_WIDTH - ( 30 * lvgl.LCD_SCALE ),
 							h		= BTN_CONT_HEIGHT -2, 
 							press	= nil,
 							-- clickable= false,
@@ -201,36 +201,36 @@ local function buttonCreate( bat, todayUsed, widget, options )
 							flexFlow	= lvgl.FLOW_COLUMN , 
 							children = {
 								{	type	= "box" , 			-- right-up
-									w		= BTN_CONT_WIDTH -32 , 
+									w		= BTN_CONT_WIDTH - ( 32 * lvgl.LCD_SCALE ) , 
 									flexFlow = lvgl.FLOW_ROW , 
 									-- thickness= 0 ,
 									children = {
 										{	type	= "label", 
-											w		= 100,
+											w		= 100 * lvgl.LCD_SCALE,
 											text	= string.sub( bat.product, 1,10 ) ,
 										} ,
 										{	type	= "label", 
-											w		= 80,
+											w		= 80 * lvgl.LCD_SCALE,
 											text	= bat.capacity .. " mAh"
 										} ,
 										{	type	= "label", 
-											w		= 65,
+											w		= 65 * lvgl.LCD_SCALE,
 											text	= bat.cells .. "S" .. hv
 										} 
 									 }
 								}	-- right-up
 								,
-								{	type	= "hline" , w=280, h=1, color=COLOR_THEME_SECONDARY2 }  
+								{	type	= "hline" , w= 280 * lvgl.LCD_SCALE, h=1, color=COLOR_THEME_SECONDARY2 }  
 								,
 								{	type	= "box" , -- right-down
-									w		= BTN_CONT_WIDTH -32 , -- - BTN_LEFT,-- - 50, 
+									w		= BTN_CONT_WIDTH - ( 32  * lvgl.LCD_SCALE ) , -- - BTN_LEFT,-- - 50, 
 									press	= nil,
 									flexFlow = lvgl.FLOW_ROW , 
 									flexPad	= 0 , 
 									-- thickness= 0 ,
 									children = {
 										{	type	= "label", 
-											w		= 160,
+											w		= 160 * lvgl.LCD_SCALE,
 											text	= dt.getDateTime( bat.lastStartDate ),
 											color	= dateColor,
 										},
@@ -238,7 +238,7 @@ local function buttonCreate( bat, todayUsed, widget, options )
 											text	= "Flight: "
 										},
 										{	type	= "label", 
-											w		= 40,
+											w		= 40 * lvgl.LCD_SCALE,
 											text	= tostring( bat.count + bat.earlyCount ),
 										}
 									} ,
@@ -371,10 +371,10 @@ function widget.refresh(event, touchState)
 end
 
 function widget.pageHead( screenType, subUi, widget, options )
-	local headHeight = PAGE_HEAD_HEIGH
-	local btnHeigh = headHeight - 16
+	local headHeight = PAGE_HEAD_HEIGH  * lvgl.LCD_SCALE
+	local btnHeigh = headHeight - ( 16  * lvgl.LCD_SCALE )
 	local picWidth = headHeight
-	local titleWidth = 120
+	local titleWidth = 120 * lvgl.LCD_SCALE
 	local headButtons, iconFile, subTitle
 	local title = "BattUse"
 	
@@ -390,25 +390,25 @@ function widget.pageHead( screenType, subUi, widget, options )
 	-- end
 	
 	local btnInputs	=	{ type = "button", text = "Input" ,
-									w = 55, h = btnHeigh ,
+									w = 55 * lvgl.LCD_SCALE, h = btnHeigh ,
 									press = (function() widget.switchPage( PAGE_SETINPUT, widget, options	); end)
 								}
 	local btnSelect	=	{ type = "button", text = "Batteries" ,
-									w = 80, h = btnHeigh ,
+									w = 80 * lvgl.LCD_SCALE, h = btnHeigh ,
 									-- hami érték esetén nem rejti el a gombot...
 									visible	= (function() return ( 0 == flyData.quickSelChannel ); end) ,
 									press		= (function() widget.switchPage( PAGE_BATSELECT, widget, options ); end)
 								}
 	local btnBehavior	=	{ type = "button", text = "Behaviour" ,
-									w = 90, h = btnHeigh ,
+									w = 90 * lvgl.LCD_SCALE, h = btnHeigh ,
 									press = (function() widget.switchPage( PAGE_BEHAVIOR, widget, options ); end)
 								}
 	local btnLog		=	{ type = "button", text = "Log" ,
-									w = 45, h = btnHeigh ,
+									w = 45 * lvgl.LCD_SCALE, h = btnHeigh ,
 									press = (function() widget.switchPage( PAGE_LOG_VIEW, widget, options ); end)
 								}
 	local btnClose		=	{ type = "button", text = "Close" ,
-									w = 55, h = btnHeigh ,
+									w = 55 * lvgl.LCD_SCALE, h = btnHeigh ,
 									press = (function() lvgl.exitFullScreen(); end)
 								}
 
@@ -560,7 +560,7 @@ function widget.setInputPage(widget, options)
 	local srcQS_Filter= lvgl.SRC_CLEAR | lvgl.SRC_POT
 
 	-- TODO : Törölni, Csak teszt idejére bővítve a filter.
-	srcFilter =  lvgl.SRC_ALL
+	-- srcFilter =  lvgl.SRC_ALL
 	
 	lvgl.clear();
 			
@@ -569,18 +569,19 @@ function widget.setInputPage(widget, options)
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
-						{	type = "label", text = "Battery file" },
-						{	type = "choice",  
-							w = 260,
+						{	type	= "label", 
+							text	= "Battery file" 
+						}
+						,
+						{	type	= "choice",  
+							w		= 260 * lvgl.LCD_SCALE,
 							title = "Select battery file",
-							values = settings.listBatfiles() ,
+							values= settings.listBatfiles() ,
 							get = (function( ) return settings.getBattFileID(   ); end) , 
-							set = (	
-										function(s)        
-											settings.setBattFileID( s ); 
-											flyData.readBatteryFile( settings.getBattFileFullPath() );
-										end	
-									) 
+							set =	function(s)        
+										settings.setBattFileID( s ); 
+										flyData.readBatteryFile( settings.getBattFileFullPath() );
+									end	
 						} 
 					}
 				}

@@ -75,7 +75,7 @@ function dispProdCapa( widget )
 	local WZW = math.floor( widget.zone.w  / 2) * 2		-- Párosszámra lefelé kerekítve.
 	local f = 0
 	
-	if widget.zone.h / 2 < 22 then
+	if widget.zone.h / 2 < ( 22 * lvgl.LCD_SCALE ) then
 		f = SMLSIZE
 	end	
 	-- d.log( "widget.zone.w = " ,widget.zone.w, "dispProdCapa()" )
@@ -231,9 +231,9 @@ function dispStartCount( widget )
 						{	type	= "label", 
 							w		= widget.zone.w , 
 							align	= LEFT, 
-							w		= 60,
+							w		= 70 * lvgl.LCD_SCALE,
 							font	= SMLSIZE,
-							text	= "Start counter"	
+							text	= "Battery flight count"	
 						}	
 					}
 				} 
@@ -271,8 +271,8 @@ end
 
 function dispFlyTime( widget )
 	local ROUND = 8
-	local BORDER_WIDTH = 3
-	local BOX_WIDTH = math.min( widget.zone.w , 180 )
+	local BORDER_WIDTH = 3  * lvgl.LCD_SCALE
+	local BOX_WIDTH = math.min( widget.zone.w , ( 180 * lvgl.LCD_SCALE ) )
 	local FontSize = 0
 
 	local box_h = widget.zone.h - BORDER_WIDTH
@@ -347,16 +347,16 @@ function dispMahPercent( widget )
 
 	local WZH 				= widget.zone.h
 	local WZW				= widget.zone.w
-	local INFO_LINE_INS	= 10
+	local INFO_LINE_INS	= 10 * lvgl.LCD_SCALE
 	
 	-- app.d.log( "WZH" , WZH , "dispMahPercent()" )
 	
 	-- WZH = 39
-	local INFO_LINE_H		= 15
+	local INFO_LINE_H		= 15 * lvgl.LCD_SCALE
 	local INFO_LINE_FONT	= SMLSIZE
 		
 	if WZH > 80 then
-		INFO_LINE_H		= 20
+		INFO_LINE_H		= 20 * lvgl.LCD_SCALE
 		INFO_LINE_FONT	= 0 --SMLSIZE
 		
 	elseif WZH <= 39 then -- Top Main
@@ -366,7 +366,7 @@ function dispMahPercent( widget )
 	end
 	
 	local PERCENT_H		= WZH - INFO_LINE_H - INFO_LINE_H
-	local PERCENT_BORDER	= 2
+	local PERCENT_BORDER	= math.floor(  2 * lvgl.LCD_SCALE )
 	local PERCENT_FONT	= flyData.fontSize( PERCENT_H )
 
 	local disp =	{	type		= "box",
@@ -547,7 +547,7 @@ function dispMahPercent( widget )
 																end;
 															end;
 
-															if p < 60 then;
+															if p < PERCENT_LINE_GREEN then;
 																return RED;
 															-- elseif p > 90 then;
 																-- return WHITE;
@@ -599,7 +599,7 @@ function dispMaxAmp( widget )
 								w		= widget.zone.w , 
 								align	= LEFT, 
 								font	= SMLSIZE,
-								text	=	"MAX Amp"	
+								text	=	"Max current draw"	
 							}	
 					}
 				} 
@@ -611,7 +611,7 @@ function dispMaxAmp( widget )
 						{	type	= "label", 
 							w		= widget.zone.w , 
 							align	= CENTER + VCENTER, 
-							font	= flyData.fontSize( widget.zone.h - 11 ) ,
+							font	= flyData.fontSize( widget.zone.h - ( 11 * lvlg.LCD_SCALE ) ) ,
 							text	= 	function(s)
 											if flyData.saved.isSaved then;
 												a = flyData.saved.maxAmp;
@@ -639,8 +639,8 @@ function dispBatteryPercent( widget )
 	
 		-- Widget on screen
 		
-		local SHIFT = 16
-		local BCK_SHIFT = math.min( 4 , ( widget.zone.h - SHIFT ) / 20 )
+		-- local SHIFT = 16
+		-- local BCK_SHIFT = math.min( 4 , ( widget.zone.h - SHIFT ) / 20 )
 		
 		
 	   widget.ui = lvgl.build({
@@ -653,7 +653,7 @@ function dispBatteryPercent( widget )
 								w		= widget.zone.w ,
 								-- align	= LEFT ,
 								font	= SMLSIZE ,
-								w		= 60,
+								w		= 60 * lvgl.LCD_SCALE,
 								text	=	"Battery Volt"
 							}
 							,
@@ -775,7 +775,7 @@ function dispQuickSelect( widget )
 	local batList = flyData.getBatteryTable()
 	local batBox = {}
 	local boxW = ( widget.zone.w / #batList ) -2 - ( #batList * 1 )
-	local boxH = widget.zone.h - 40
+	local boxH = widget.zone.h - ( 40 * lvgl.LCD_SCALE )
 	local chRange = ( 2048 / #batList ) + 1
 	local previousQS_ChannelValue = -1
 	
@@ -883,25 +883,7 @@ function dispQuickSelect( widget )
 						flexPad	= lvgl.PAD_SMALL ,
 						children = 	batBox
 					}
-					,
-					{	type	= "box", 
-						w		=	widget.zone.w,
-						children = {
-							{	type	= "label", 
-								w		= widget.zone.w , 
-								align	= CENTER + VCENTER, 
-								font	= MIDSIZE,
-								text	=	function()
-												if flyData.saved.isSaved then;
-													batId = flyData.saved.batteryID;
-												else;
-													batId = flyData.batteryRec.id or "Select Battery!" ;
-												end;
-												return batId ;
-											end
-							}
-						}
-					}
+
 				}
 
 			}
@@ -923,7 +905,7 @@ function dispLandingTarget( widget )
 							w		= widget.zone.w , 
 							align	= LEFT, 
 							font	= SMLSIZE,
-							w		= 60 ,
+							w		= 60 * lvgl.LCD_SCALE ,
 							text	= "Landing target"	
 						}	
 					}
