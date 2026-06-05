@@ -722,18 +722,14 @@ function widget.behaviorPage(widget, options)
 							{	type	= "numberEdit",
 								min	=  0 , 
 								max	= 98 ,
-								w		= 34 ,
-								get	=	(
-												function( ) 
-													return settings.getHapticPercent( i );    
-												end
-											) , 
-								set	=	(
-												function(s)        
-													settings.setHapticPercent( i, s ); 
-													flyData.setBasePercentsTable_Haptic( settings.getHapticPercentAll() )
-												end	
-											)
+								w		= 34 * lvgl.LCD_SCALE,
+								get	=	function( ) 
+												return settings.getHapticPercent( i );    
+											end , 
+								set	=	function(s)        
+												settings.setHapticPercent( i, s ); 
+												flyData.setBasePercentsTable_Haptic( settings.getHapticPercentAll() )
+											end
 							} 
 							
 		tblHapticPercents[ #tblHapticPercents + 1 ] =
@@ -746,18 +742,14 @@ function widget.behaviorPage(widget, options)
 							{	type	= "numberEdit",
 								min	=  0 , 
 								max	= 98 ,
-								w		= 34 ,
-								get	=	(
-												function( ) 
-													return settings.getSoundPercent( i );    
-												end
-											) , 
-								set	=	(
-												function(s)        
-													settings.setSoundPercent( i, s ); 
-													flyData.setBasePercentsTable_Sound( settings.getSoundPercentAll() )
-												end
-											) 
+								w		= 34 * lvgl.LCD_SCALE,
+								get	=	function( ) 
+												return settings.getSoundPercent( i );    
+											end , 
+								set	=	function(s)        
+												settings.setSoundPercent( i, s ); 
+												flyData.setBasePercentsTable_Sound( settings.getSoundPercentAll() )
+											end
 							} 
 							
 		tblSoundPercents[ #tblSoundPercents + 1 ] =
@@ -778,58 +770,71 @@ function widget.behaviorPage(widget, options)
 							text	= "Landing percent : " 
 						},
 						{	type	= "slider",  
-							w		= 260 ,
+							w		= 260 * lvgl.LCD_SCALE ,
 							min	= 20, 
 							max	= 90,
-							get =	(
-										function( ) 
+							get =	function( ) 
 											return settings.getLandingPercent(); 
-										end
-									) , 
-							set =	(
-										function(s)        
-											settings.setLandingPercent( s ); -- Rounding here.
-											flyData.setTargetLandingPercent( settings.getLandingPercent() );
-											flyData.mAhCalcFlyable();
-										end
-									) 
+									end , 
+							set =	function(s)        
+										settings.setLandingPercent( s ); -- Rounding here.
+										flyData.setTargetLandingPercent( settings.getLandingPercent() );
+										flyData.mAhCalcFlyable();
+									end
 						} ,
 						{	type	= "label", 
-							text	=	(	
-											function() 
-												return math.floor( settings.getLandingPercent() ) .. "%"; 
-											end
-										) 
+							text	=	function() 
+											return math.floor( settings.getLandingPercent() ) .. "%"; 
+										end
 						}
 					}
 				}
 				,
-				{	type		= "box",
-					flexFlow	= lvgl.FLOW_ROW, 
+				{	type		= "setting",
+					-- flexFlow	= lvgl.FLOW_ROW, 
+					title	= "Log path : " ,
+					w		= 450 * lvgl.LCD_SCALE ,
 					children = {
-						{	type	= "label", 
-							text	= "Log path : " 
-						},
 						{	type	= "choice",  
-							w		= 260,
+							w		= 260 * lvgl.LCD_SCALE,
+							x		= 120 ,
 							title = "Select log path",
 							values=	{	LOG_PATHS[1] , 
 											LOG_PATHS[2] 
 										} ,
-							get	=	(	
-											function() 
-												return settings.getLogPathID(); 
-											end
-										) , 
-							set	= (
-											function(s)
-												settings.setLogPathID( s ); 
-												flyData.setLogPath( LOG_PATHS[ s ] );
-											end
-										) 
+							get	=	function() 
+											return settings.getLogPathID(); 
+										end , 
+							set	=	function(s)
+											settings.setLogPathID( s ); 
+											flyData.setLogPath( LOG_PATHS[ s ] );
+										end
 						} 
 					}
 				}
+					-- régi box label get elrendezés
+				-- {	type		= "box",
+					-- flexFlow	= lvgl.FLOW_ROW, 
+					-- children = {
+						-- {	type	= "label", 
+							-- text	= "Log path : " 
+						-- },
+						-- {	type	= "choice",  
+							-- w		= 260 * lvgl.LCD_SCALE,
+							-- title = "Select log path",
+							-- values=	{	LOG_PATHS[1] , 
+											-- LOG_PATHS[2] 
+										-- } ,
+							-- get	=	function() 
+											-- return settings.getLogPathID(); 
+										-- end , 
+							-- set	=	function(s)
+											-- settings.setLogPathID( s ); 
+											-- flyData.setLogPath( LOG_PATHS[ s ] );
+										-- end
+						-- } 
+					-- }
+				-- }
 				,
 				{	type		= "box",
 					flexFlow = lvgl.FLOW_ROW, 
@@ -837,21 +842,17 @@ function widget.behaviorPage(widget, options)
 						{	type	= "label", 
 							text	= "Date format : " },
 						{	type	= "choice",  
-							w		= 260,
+							w		= 260 * lvgl.LCD_SCALE,
 							title	= "Select DATE format",
 							values= dt.getDateFormats() ,
-							get	=	(
-											function( )
-												return settings.getDateFormat(); 
-											end
-										) , 
-							set	=	(
-											function(s)        
-												settings.setDateFormat( s ); 
-												dt.setFormat( s );
-												flyData.setDateFormat( s );
-											end
-										)
+							get	=	function( )
+											return settings.getDateFormat(); 
+										end, 
+							set	=	function(s)        
+											settings.setDateFormat( s ); 
+											dt.setFormat( s );
+											flyData.setDateFormat( s );
+										end
 						} 
 					}
 				}
@@ -863,17 +864,13 @@ function widget.behaviorPage(widget, options)
 							text	= "Battery warning when connected : " 
 						},
 						{	type	= "toggle",  
-							get	=	(
-											function( ) 
-												return settings.getWarnWhenBatConnect(   ); 
-											end
-										) , 
-							set	=	(
-											function(s)
-												settings.setWarnWhenBatConnect( s ); 
-												flyData.setWarnWhenBatConnect( s )
-											end
-										) 
+							get	=	function( ) 
+											return settings.getWarnWhenBatConnect(   ); 
+										end , 
+							set	=	function(s)
+											settings.setWarnWhenBatConnect( s ); 
+											flyData.setWarnWhenBatConnect( s )
+										end
 						} 
 					}
 				}
@@ -885,17 +882,13 @@ function widget.behaviorPage(widget, options)
 							text	= "Battery warning when disconnected in flight " 
 						},
 						{	type	= "toggle",  
-							get	=	(
-											function( ) 
-												return settings.getWarningBatDisconnectOnFly(); 
-											end
-										) , 
-							set	=	(
-											function(s)
-												settings.setWarningBatDisconnectOnFly( s );
-												flyData.setWarningBatDisconnectOnFly( s );
-											end
-										) 
+							get	=	function( ) 
+											return settings.getWarningBatDisconnectOnFly(); 
+										end, 
+							set	=	function(s)
+											settings.setWarningBatDisconnectOnFly( s );
+											flyData.setWarningBatDisconnectOnFly( s );
+										end
 						} 
 					}
 				}
@@ -904,20 +897,16 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Battery warning when flight starts " 
+							text	= "Battery warning when flight begins " 
 						},
 						{	type	= "toggle",  
-							get	=	(
-											function( ) 
-												return settings.getWarnFlyBegin(   ); 
-											end
-										) , 
-							set	=	(
-											function(s)
-												settings.setWarnFlyBegin( s ); 
-												flyData.setWarnFlyBegin( s );
-											end
-										) 
+							get	=	function( ) 
+											return settings.getWarnFlyBegin(   ); 
+										end , 
+							set	=	function(s)
+											settings.setWarnFlyBegin( s ); 
+											flyData.setWarnFlyBegin( s );
+										end
 						} 
 					}
 				}
@@ -927,22 +916,18 @@ function widget.behaviorPage(widget, options)
 					children = {
 						{	type	= "label", 
 							text	= "Warning when battery connected under " 
-						},
+						} ,
 						{	type	= "numberEdit",
-							w		= 34 ,
+							w		= 34  * lvgl.LCD_SCALE,
 							min	= 20 , 
 							max	= 95 ,
-							get	=	(
-											function( )
-												return settings.getMinBatStartVolt(); 
-											end
-										) , 
-							set	=	(
-											function(s)
-												settings.setMinBatStartVolt( s ); 
-												flyData.setMinBatStartVolt( s );
-											end
-										) 
+							get	=	function( )
+											return settings.getMinBatStartVolt(); 
+										end , 
+							set	=	function(s)
+											settings.setMinBatStartVolt( s ); 
+											flyData.setMinBatStartVolt( s );
+										end
 						} ,
 						{	type	= "label", 
 							text	= " % of total voltage" 
@@ -957,20 +942,16 @@ function widget.behaviorPage(widget, options)
 							text	= "Battery overuse warning at " 
 						},
 						{	type	= "numberEdit",
-							w		= 34 ,
+							w		= 34 * lvgl.LCD_SCALE ,
 							min	= 0 , 
 							max	= 95,
-							get	=	(
-											function( ) 
-												return settings.getWarningBatOverUse(); 
-											end
-										) , 
-							set	=	(
-											function(s)
-												settings.getWarningBatOverUse( s ); 
-												flyData.setWarningBatOverUse( s );
-											end
-										) 
+							get	=	function( ) 
+											return settings.getWarningBatOverUse(); 
+										end, 
+							set	=	function(s)
+											settings.getWarningBatOverUse( s ); 
+											flyData.setWarningBatOverUse( s );
+										end
 						},
 						{	type	= "label", 
 							text	= " %" 
@@ -983,6 +964,12 @@ function widget.behaviorPage(widget, options)
 					children = {
 						{	type	= "setting", 
 							title	= "Report remaining capacy during flight at :" 
+							, children = {
+								{	type		= "box",
+									flexFlow = lvgl.FLOW_ROW, 
+									children = tblSoundPercents	
+								}
+							}
 						}
 					}
 				}
@@ -996,7 +983,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "setting", 
-							title	= "Haptic sign when Fly mAh reach" 
+							title	= "Haptic notification during flight when current draw reaches" 
 						}
 					}
 				}
@@ -1013,7 +1000,7 @@ function widget.behaviorPage(widget, options)
 							text	= "Haptic warning when overused at every " 
 						},
 						{	type	= "numberEdit",
-							w		= 34 ,
+							w		= 34  * lvgl.LCD_SCALE,
 							min	=  0 , 
 							max	= 20 ,
 							get	=	(
