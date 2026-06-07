@@ -605,7 +605,7 @@ function widget.setInputPage(widget, options)
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
-						{	type = "label", text = "Current draw telemetry sensor : " },
+						{	type = "label", text = "Current telemetry sensor : " },
 						{	type = "source", filter = srcFilter, 
 							get = (function( ) return settings.getUsedMAhSource(   ); end), 
 							set = (	function(s)        
@@ -620,7 +620,7 @@ function widget.setInputPage(widget, options)
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
-						{	type = "label", text = "Max current draw telemetry sensor : " },
+						{	type = "label", text = "Peak current telemetry sensor : " },
 						{	type = "source",   filter = srcFilter, 
 							get = (function( ) return settings.getMaxMAhSource(   ); end), 
 							set = (	function(s)        
@@ -635,7 +635,7 @@ function widget.setInputPage(widget, options)
 					thickness	= 0 ,
 					flexFlow		= lvgl.FLOW_ROW, 
 					children		= {
-						{	type	= "label", text = "Battery quick select channel : " },
+						{	type	= "label", text = "Battery quick selector channel : " },
 						{	type	= "source",   filter = srcQS_Filter , 
 							get	= (function( ) return settings.getQuickSelChannel(); end), 
 							set	=	(	function(s)        
@@ -652,7 +652,7 @@ function widget.setInputPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					thickness = 0 ,
 					children = {
-						{	type = "label", text = "Backup Battery Volt(s) : "},
+						{	type = "label", text = "Backup battery voltage : "},
 						{	type = "numberEdit", min = 0, max = 45, w = 60, 
 							get = (function( ) return settings.getBackupVolt(   ); end), 
 							set = (	function(v)
@@ -790,26 +790,30 @@ function widget.behaviorPage(widget, options)
 					}
 				}
 				,
-				{	type		= "setting",
-					-- flexFlow	= lvgl.FLOW_ROW, 
-					title	= "Log path : " ,
-					w		= 450 * lvgl.LCD_SCALE ,
+				{ type = "box" ,
 					children = {
-						{	type	= "choice",  
-							w		= 260 * lvgl.LCD_SCALE,
-							x		= 120 ,
-							title = "Select log path",
-							values=	{	LOG_PATHS[1] , 
-											LOG_PATHS[2] 
-										} ,
-							get	=	function() 
-											return settings.getLogPathID(); 
-										end , 
-							set	=	function(s)
-											settings.setLogPathID( s ); 
-											flyData.setLogPath( LOG_PATHS[ s ] );
-										end
-						} 
+						{	type		= "setting",
+							-- flexFlow	= lvgl.FLOW_ROW, 
+							title	= "Log path : " ,
+							w		= 450 * lvgl.LCD_SCALE ,
+							children = {
+								{	type	= "choice",  
+									w		= 260 * lvgl.LCD_SCALE,
+									-- x		= 120 ,
+									title = "Select log path",
+									values=	{	LOG_PATHS[1] , 
+													LOG_PATHS[2] 
+												} ,
+									get	=	function() 
+													return settings.getLogPathID(); 
+												end , 
+									set	=	function(s)
+													settings.setLogPathID( s ); 
+													flyData.setLogPath( LOG_PATHS[ s ] );
+												end
+								} 
+							}
+						}
 					}
 				}
 					-- régi box label get elrendezés
@@ -915,7 +919,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Warning when battery connected under " 
+							text	= "Warning when battery connected below " 
 						} ,
 						{	type	= "numberEdit",
 							w		= 34  * lvgl.LCD_SCALE,
@@ -930,7 +934,7 @@ function widget.behaviorPage(widget, options)
 										end
 						} ,
 						{	type	= "label", 
-							text	= " % of total voltage" 
+							text	= " % of charge" 
 						}
 					}
 				}
@@ -963,7 +967,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "setting", 
-							title	= "Report remaining capacy during flight at :" 
+							title	= "Report remaining charge during flight at :" 
 							, children = {
 								{	type		= "box",
 									flexFlow = lvgl.FLOW_ROW, 
@@ -983,7 +987,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "setting", 
-							title	= "Haptic notification during flight when current draw reaches" 
+							title	= "Haptic notification when battery level drops under" 
 						}
 					}
 				}
@@ -997,7 +1001,7 @@ function widget.behaviorPage(widget, options)
 					flexFlow = lvgl.FLOW_ROW, 
 					children = {
 						{	type	= "label", 
-							text	= "Haptic warning when overused at every " 
+							text	= "Haptic warning when overused, every " 
 						},
 						{	type	= "numberEdit",
 							w		= 34  * lvgl.LCD_SCALE,
@@ -1148,7 +1152,7 @@ function widget.logViewPage(widget, options)
 																									{	type	= "label", 
 																										w		= 80,
 																										font	= SMLSIZE ,
-																										text	= "Flight time : "
+																										text	= "Date & time : "
 																									},
 																									{	type	= "label", 
 																										-- w		= 320,
@@ -1213,7 +1217,7 @@ function widget.logViewPage(widget, options)
 																															return 
 																																	-- "Current draw: " ..
 																																	 logList[ logLineId ].mAmpFly .. " mA," ..
-																																	 " / Max: " ..
+																																	 " / Peak: " ..
 																																	 logList[ logLineId ].maxAmp .. " A";
 																														end
 																													) 

@@ -28,16 +28,16 @@ local batFile	= {}
 
 local options =	{	
 							{ "Display"	, CHOICE	,	1, {	
-																	"Battery Name"	,
-																	"Battery Percent"	,
+																	"Battery name"	,
+																	"Battery status"	,			-- Battery Voltage in %
 																	"Fly Time"	,
-																	"Landing target	"	,
-																	"Last Use"	,
-																	"mAh Percent"	,
-																	"MAX Amp"	,
-																	"Product, Capacity"	,
-																	"Quick Select"	,
-																	"Start Count"																	
+																	"Landing target %"	,
+																	"Last used"	,
+																	"Remaining charge"	,		-- mAh Percent : % Line
+																	"Peak current"	,				-- MAX Amp
+																	"Battery properties"	,		-- Product, Capacity
+																	"Quick Selector"	,
+																	"Flight Count"																	
 																} 
 							}
 						}
