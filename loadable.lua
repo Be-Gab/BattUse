@@ -790,15 +790,17 @@ function widget.behaviorPage(widget, options)
 					}
 				}
 				,
-				{ type = "box" ,
+				{	type = "box" ,
+					-- flexFlow = lvgl.FLOW_ROW ,
+					-- flexFlow = lvgl.FLOW_COLUMN ,
 					children = {
 						{	type		= "setting",
 							-- flexFlow	= lvgl.FLOW_ROW, 
 							title	= "Log path : " ,
-							w		= 450 * lvgl.LCD_SCALE ,
+							-- w		= 450 * lvgl.LCD_SCALE ,
 							children = {
 								{	type	= "choice",  
-									w		= 260 * lvgl.LCD_SCALE,
+									-- w		= 260 * lvgl.LCD_SCALE,
 									-- x		= 120 ,
 									title = "Select log path",
 									values=	{	LOG_PATHS[1] , 
