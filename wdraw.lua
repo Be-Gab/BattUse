@@ -611,7 +611,7 @@ function dispMaxAmp( widget )
 						{	type	= "label", 
 							w		= widget.zone.w , 
 							align	= CENTER + VCENTER, 
-							font	= flyData.fontSize( widget.zone.h - ( 11 * lvlg.LCD_SCALE ) ) ,
+							font	= flyData.fontSize( widget.zone.h - ( 11 * lvgl.LCD_SCALE ) ) ,
 							text	= 	function(s)
 											if flyData.saved.isSaved then;
 												a = flyData.saved.maxAmp;

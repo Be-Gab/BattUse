@@ -27,7 +27,7 @@ local LOG_PATHS		=	{	[1]	=	"/LOGS/" ,
 
 local PERCENTS_COUNT		= 6
 local LOG_MAX_ROW_COUNT = 10 --20 -- 20  
-local PAGE_HEAD_HEIGH	= 40
+local PAGE_HEAD_HEIGH	= 40 * lvgl.LCD_SCALE 
 
 local PAGE_WIDGET			= 1
 local PAGE_BATSELECT		= 2
@@ -371,7 +371,7 @@ function widget.refresh(event, touchState)
 end
 
 function widget.pageHead( screenType, subUi, widget, options )
-	local headHeight = PAGE_HEAD_HEIGH  * lvgl.LCD_SCALE
+	local headHeight = PAGE_HEAD_HEIGH 
 	local btnHeigh = headHeight - ( 16  * lvgl.LCD_SCALE )
 	local picWidth = headHeight
 	local titleWidth = 120 * lvgl.LCD_SCALE
@@ -790,57 +790,28 @@ function widget.behaviorPage(widget, options)
 					}
 				}
 				,
-				{	type = "box" ,
-					-- flexFlow = lvgl.FLOW_ROW ,
-					-- flexFlow = lvgl.FLOW_COLUMN ,
+				{	type		= "box",
+					flexFlow	= lvgl.FLOW_ROW, 
 					children = {
-						{	type		= "setting",
-							-- flexFlow	= lvgl.FLOW_ROW, 
-							title	= "Log path : " ,
-							-- w		= 450 * lvgl.LCD_SCALE ,
-							children = {
-								{	type	= "choice",  
-									-- w		= 260 * lvgl.LCD_SCALE,
-									-- x		= 120 ,
-									title = "Select log path",
-									values=	{	LOG_PATHS[1] , 
-													LOG_PATHS[2] 
-												} ,
-									get	=	function() 
-													return settings.getLogPathID(); 
-												end , 
-									set	=	function(s)
-													settings.setLogPathID( s ); 
-													flyData.setLogPath( LOG_PATHS[ s ] );
-												end
-								} 
-							}
-						}
+						{	type	= "label", 
+							text	= "Log path : " 
+						},
+						{	type	= "choice",  
+							w		= 260 * lvgl.LCD_SCALE,
+							title = "Select log path",
+							values=	{	LOG_PATHS[1] , 
+											LOG_PATHS[2] 
+										} ,
+							get	=	function() 
+											return settings.getLogPathID(); 
+										end , 
+							set	=	function(s)
+											settings.setLogPathID( s ); 
+											flyData.setLogPath( LOG_PATHS[ s ] );
+										end
+						} 
 					}
 				}
-					-- régi box label get elrendezés
-				-- {	type		= "box",
-					-- flexFlow	= lvgl.FLOW_ROW, 
-					-- children = {
-						-- {	type	= "label", 
-							-- text	= "Log path : " 
-						-- },
-						-- {	type	= "choice",  
-							-- w		= 260 * lvgl.LCD_SCALE,
-							-- title = "Select log path",
-							-- values=	{	LOG_PATHS[1] , 
-											-- LOG_PATHS[2] 
-										-- } ,
-							-- get	=	function() 
-											-- return settings.getLogPathID(); 
-										-- end , 
-							-- set	=	function(s)
-											-- settings.setLogPathID( s ); 
-											-- flyData.setLogPath( LOG_PATHS[ s ] );
-										-- end
-						-- } 
-					-- }
-				-- }
 				,
 				{	type		= "box",
 					flexFlow = lvgl.FLOW_ROW, 
@@ -966,37 +937,29 @@ function widget.behaviorPage(widget, options)
 				}
 				,
 				{	type		= "box",
-					flexFlow = lvgl.FLOW_ROW, 
+					flexFlow = lvgl.FLOW_COLUMN, 
 					children = {
-						{	type	= "setting", 
-							title	= "Report remaining charge during flight at :" 
-							, children = {
-								{	type		= "box",
-									flexFlow = lvgl.FLOW_ROW, 
-									children = tblSoundPercents	
-								}
-							}
+						{	type	= "label", 
+							text	= "Report remaining charge during flight at :" 
+						} ,
+						{	type		= "box",
+							flexFlow = lvgl.FLOW_ROW, 
+							children = tblSoundPercents	
 						}
 					}
 				}
 				,
 				{	type		= "box",
-					flexFlow = lvgl.FLOW_ROW, 
-					children = tblSoundPercents	
-				}
-				,
-				{	type		= "box",
-					flexFlow = lvgl.FLOW_ROW, 
+					flexFlow = lvgl.FLOW_COLUMN, 
 					children = {
-						{	type	= "setting", 
-							title	= "Haptic notification when battery level drops under" 
+						{	type	= "label", 
+							text	= "Haptic notification when battery level drops under" 
+						} ,
+						{	type		= "box",
+							flexFlow = lvgl.FLOW_ROW, 
+							children = tblHapticPercents	
 						}
 					}
-				}
-				,
-				{	type		= "box",
-					flexFlow	= lvgl.FLOW_ROW, 
-					children	= tblHapticPercents	
 				}
 				,
 				{	type		= "box",
@@ -1035,7 +998,7 @@ function widget.behaviorPage(widget, options)
 end
 
 function widget.logViewPage(widget, options)
-	local BTN_HEIGHT = 32
+	local BTN_HEIGHT = 32 * lvgl.LCD_SCALE
 	local BTN_WIDTH = widget.zone.w * 0.9	
 	
 	local logFile = flyData.getLogFile()
@@ -1080,19 +1043,19 @@ function widget.logViewPage(widget, options)
 										-- clickable= false	,
 										children	=	{
 															{	type	= "label", 
-																w		= 160,
+																w		= 160 * lvgl.LCD_SCALE,
 																text	= dt.getDateTime( logList[r].startFly ) 
 															} ,
 															{	type	= "label", 
-																w		= 90,
+																w		= 90 * lvgl.LCD_SCALE,
 																text	= logList[r].batteryID 
 															} ,
 															{	type	= "label", 
-																w		= 40,
+																w		= 40 * lvgl.LCD_SCALE,
 																text	= logList[r].flyTime
 															} ,
 															{	type	= "label", 
-																w		= 80,
+																w		= 80 * lvgl.LCD_SCALE,
 																align	= RIGHT,
 																text	= logList[r].mAmpFly .. " mA"
 															} 
@@ -1118,9 +1081,10 @@ function widget.logViewPage(widget, options)
 						align		= CENTER+VCENTER,
 						children =	{
 											{	type	= "button" , -- full Button
-												cornerRadius = 12,
+												cornerRadius = 12 * lvgl.LCD_SCALE,
 												w		= widget.zone.w * 0.92 , 
-												h		= 220 ,
+												h		= 220 * lvgl.LCD_SCALE ,
+												-- h		= widget.zone.h - PAGE_HEAD_HEIGH -15 ,
 												-- align	= CENTER + VCENTER ,
 												press		=	(
 																	function() 
@@ -1132,7 +1096,7 @@ function widget.logViewPage(widget, options)
 																		x		= 0 , 
 																		y		= 0 , 
 																		w		= widget.zone.w * 0.9 , 
-																		h		= 200 , 
+																		h		= 220 * lvgl.LCD_SCALE , 
 																		flexFlow	= lvgl.FLOW_COLUMN, 
 																		scrollBar= false,  scrollDir = lvgl.SCROLL_OFF ,
 
@@ -1152,7 +1116,7 @@ function widget.logViewPage(widget, options)
 																								align		= LEFT,		
 																								children	=	{
 																									{	type	= "label", 
-																										w		= 80,
+																										w		= 80 * lvgl.LCD_SCALE,
 																										font	= SMLSIZE ,
 																										text	= "Date & time : "
 																									},
@@ -1177,12 +1141,12 @@ function widget.logViewPage(widget, options)
 																								align		= LEFT + VCENTER,		
 																								children	=	{
 																									{	type	= "label", 
-																										w		= 80,
+																										w		= 80 * lvgl.LCD_SCALE,
 																										font	= SMLSIZE ,
 																										text	= "Duration : "
 																									},
 																									{	type	= "label", 
-																										w		= 320,
+																										w		= 320 * lvgl.LCD_SCALE,
 																										align	= CENTER ,
 																										font	= MIDSIZE,
 																										text	=	(	
@@ -1206,12 +1170,12 @@ function widget.logViewPage(widget, options)
 																										-- text	= "Amper:"
 																									-- },
 																									{	type	= "label", 
-																										w		= 80,
+																										w		= 80 * lvgl.LCD_SCALE,
 																										font	= SMLSIZE ,
 																										text	= "Current draw:"
 																									},
 																									{	type	= "label", 
-																										w		= 320,
+																										w		= 320 * lvgl.LCD_SCALE,
 																										align	= CENTER ,
 																										font	= MIDSIZE ,
 																										text	=	(	
@@ -1234,12 +1198,12 @@ function widget.logViewPage(widget, options)
 																								align		= LEFT + VCENTER,		
 																								children	=	{
 																									{	type	= "label", 
-																										w		= 80,
+																										w		= 80 * lvgl.LCD_SCALE,
 																										font	= SMLSIZE ,
 																										text	= "Battery:"
 																									},
 																									{	type	= "label", 
-																										w		= 320,
+																										w		= 320 * lvgl.LCD_SCALE,
 																										align	= CENTER ,
 																										font	= MIDSIZE,
 																										text	=	(	
@@ -1249,7 +1213,7 @@ function widget.logViewPage(widget, options)
 																																 .. " / " ..
 																																 logList[ logLineId ].batteryProduct;
 																															if logList[ logLineId ].startCount then;
-																																s	= s .. " Count:" ..
+																																s	= s .. " , Count:" ..
 																																	 logList[ logLineId ].startCount;
 																															end;
 																															return s;
@@ -1266,12 +1230,12 @@ function widget.logViewPage(widget, options)
 																								align		= LEFT + VCENTER,		
 																								children	=	{
 																									{	type	= "label", 
-																										w		= 120,
+																										w		= 120 * lvgl.LCD_SCALE,
 																										font	= SMLSIZE ,
 																										text	= "Initial charge level : "
 																									},
 																									{	type	= "label", 
-																										w		= 280,
+																										w		= 280 * lvgl.LCD_SCALE,
 																										align	= CENTER ,
 																										font	= MIDSIZE,
 																										text	=	(	
@@ -1292,12 +1256,12 @@ function widget.logViewPage(widget, options)
 																								align		= LEFT + VCENTER,		
 																								children	=	{
 																									{	type	= "label", 
-																										w		= 120,
+																										w		= 120 * lvgl.LCD_SCALE,
 																										font	= SMLSIZE ,
 																										text	= "Final charge level : "
 																									},
 																									{	type	= "label", 
-																										w		= 280,
+																										w		= 280 * lvgl.LCD_SCALE,
 																										align	= CENTER ,
 																										font	= MIDSIZE,
 																										text	=	(	
@@ -1411,36 +1375,37 @@ function widget.widgetPage( widget, options )
 	lvgl.clear();
 
 	-- app.d.log( "options.Display" , options.Display , "widget.widgetPage()" )
+	
 
 	if options.Display == 1 then					-- Battery Name
 		dispBatteryID( widget )
 
-	elseif options.Display == 2 then				--	Battery Percent
-		dispBatteryPercent( widget )	
-		
-	elseif options.Display == 3 then				--	Fly Time
-		dispFlyTime( widget )
-
-	elseif options.Display == 4 then				--	Landing target	
-		dispLandingTarget( widget )
-
-	elseif options.Display == 5 then				--	Last Use
-		dispLastUseDateTime( widget )
-
-	elseif options.Display == 6 then				--	mAh Percent
-		dispMahPercent( widget )		
-		
-	elseif options.Display == 7 then				--	MAX Amp
-		dispMaxAmp( widget )		
-
-	elseif options.Display == 8 then				--	Product, Capacity
+	elseif options.Display == 2 then				--	Battery properties (Product, Capacity)
 		dispProdCapa( widget )
 		
-	elseif options.Display == 9 then				--	Quick Select
-		dispQuickSelect( widget )	
-		
-	elseif options.Display == 10 then			--	Start Count
+	elseif options.Display == 3 then				--	Battery status ( Battery Percent )
+		dispBatteryPercent( widget )	
+
+	elseif options.Display == 4 then				--	Flight Count (Start Count)
 		dispStartCount( widget )		
+		
+	elseif options.Display == 5 then				--	Fly Time
+		dispFlyTime( widget )
+
+	elseif options.Display == 6 then				--	Landing target	%
+		dispLandingTarget( widget )
+
+	elseif options.Display == 7 then				--	Last Used
+		dispLastUseDateTime( widget )
+
+	elseif options.Display == 8 then				--	Peak current (MAX Amp)
+		dispMaxAmp( widget )		
+		
+	elseif options.Display == 9 then				--	Quick Selector
+		dispQuickSelect( widget )		
+		
+	elseif options.Display == 10 then				--	Remaining charge (mAh Percent)
+		dispMahPercent( widget )		
 
 	end	
 	
