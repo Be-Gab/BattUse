@@ -14,9 +14,21 @@
 #########################################################################]]
 local app = {}
 
-app.name  = "BattUse"
+app.name		= "BattUse"
 app.version = "v1.0.0 RC1"
-app.dir = "/WIDGETS/BattUse/"
+app.dir		= "/WIDGETS/BattUse/"
+
+-- app.STATE = {}
+-- app.STATE.OPEN		= 0
+-- app.STATE.COLLECT	= 1
+-- app.STATE.END		= 2
+
+-- app.state = {
+	-- phase				= app.STATE.OPEN,
+	-- logData			= {},
+	-- cpuThreshold	= 75,   -- % felett megállunk
+-- }
+
 
 local settings	= {}
 local flyData	= {}

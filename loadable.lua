@@ -1051,7 +1051,7 @@ function widget.logViewPage(widget, options)
 	local logLineId = 0
 	local detailsVisible = false
 	
-	logLines.readCsv( logFile )
+	logLines.readCsvLastLines( logFile , 6 )
 	
 	--	Process backwards the last lines, max line count : LOG_MAX_ROW_COUNT
 	local logButtons = {};
@@ -1059,8 +1059,7 @@ function widget.logViewPage(widget, options)
 	local logList = logLines.getTable()
 	
 	-- app.d.printAssoc( "logViewPage() logList" ,  logList )
-
-	-- app.d.log( "math.min( #logList , LOG_MAX_ROW_COUNT )" , math.min( #logList , LOG_MAX_ROW_COUNT ) , "logViewPage()" )
+	-- app.d.log( "lb" , lb , "logViewPage" )
 
 	for r = #logList , #logList - math.min( #logList , LOG_MAX_ROW_COUNT )+1, -1 do
 
@@ -1368,6 +1367,26 @@ function widget.logViewPage(widget, options)
 	return ui
 end
 
+function widget.logDataCollect(widget, options)
+
+	uit	=	{
+					type="box",
+					x		= LCD_H * .3,
+					w		= LCD_W - 10,
+					align	= CENTER,
+					children	=	{
+						{	type	=	"label" ,
+							text	=	"Collecting log data...",
+							align	=	CENTER,
+							font	= 0
+						}
+					}
+				}
+
+	ui = widget.pageHead( PAGE_LOG_VIEW, uit ,widget, options )
+	
+	return ui
+end
 
 function widget.switchPage(id, widget, options)
 

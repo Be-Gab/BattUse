@@ -125,6 +125,114 @@ function fileRW.readCsv(readFileName)
 	return fileLines 
 end
 
+
+function fileRW.readCsvLastLines(readFileName, lastLines )
+	local itemID = 0
+	local buffer
+
+	fileName = readFileName
+
+fileRW.log( fileName )
+	
+	-- Ha nem létezik a file
+	if fstat( fileName ) == nil then
+		print("fileRW.readCsvLastLines Error: File Open Error! File not exist? (" .. fileName .. ")" )
+		return nil
+   end
+	
+   local file = io.open(fileName, "r")
+	local linesBuffer = {}
+	local linesID = 1
+	
+	buffer = io.read(file, 2048 * 32)  
+
+	-- Process lines
+	fileLines = {}
+   for line in string.gmatch(buffer, "(.-)\n") do  
+		
+		-- Read Heading
+		if itemID == 0  then
+		
+			local cnt = 1
+
+			for   val in string_gmatch( line.."," , "([^,]*)," ) do
+				fieldNames[cnt] = val
+				fieldPos[ val ] = cnt
+				-- fileRW.log( "Head: " .. cnt .. " : " .. val .. " => "  .. fieldNames[cnt] .. " #: " .. #fieldNames )
+				cnt = cnt + 1
+			end
+		 
+			itemID = 1
+			
+		else
+			
+			linesBuffer[linesID] = line
+			linesID =( linesID % lastLines ) + 1   -- körkörösen lép
+
+			itemID = itemID + 1
+			
+		end
+		 
+   end  
+	
+   io.close(file) 	
+	
+	-- --------------------------------------------------------------
+	-- after Work
+	
+	local startPos
+	
+	if #linesBuffer < lastLines then
+		startPos = 1              -- puffer nem telt meg, 1-től indul
+	else
+		startPos = linesID    -- tele puffer: head = legrégebbi elem
+	end
+
+	for i = 0, math.min( #linesBuffer, lastLines) - 1 do
+		local idx = ((startPos - 1 + i) % lastLines) + 1
+		local cnt = 1
+		local fields = {}
+
+		fileRW.log( "lineB: " .. i .. "/" .. idx .. " : " .. startPos .. " => "  .. linesBuffer[idx] )
+
+		for v in string.gmatch( linesBuffer[idx].."," , "([^,]*)," ) do
+		
+			val = string.gsub(   v , '^["]', '')
+			val = string.gsub( val , '["]$', '')
+
+			-- fileRW.log( "readCsv :: Line/field A: " .. itemID .. "/" .. cnt .. ":" .. v  .. "<>" .. val )
+
+			if val ~= v then
+				if itemID == 1 then
+					fieldType[ cnt ] = STRING
+				end
+			else
+				if itemID == 1 then
+					fieldType[ cnt ] = NUMERIC
+				end
+				val = tonumber( val )
+				
+				-- if val == nil then
+					-- print( "fileRW.readCsv: Not numeric! (field:" , fieldNames[cnt]  , " value: [" , v , "] )" )
+				-- end 
+				
+			end
+		
+			fields[ fieldNames[cnt] ] = val
+			-- fileRW.log( "Line/field B: " .. itemID .. "/" .. cnt .. " : " .. fieldNames[cnt] .. " => "  .. tostring( val ) .. "/" .. v )
+			
+			cnt = cnt + 1
+		end	-- for
+
+		fileLines[#fileLines+1] = fields
+	end
+
+	-- --------------------------------------------------------------
+	
+	return linesBuffer --fileLines 
+end
+
+
 -- write the [saveFileName] csv file. Have to define with full path
 -- if missing, overwrite the readed file
 function fileRW.writeCsv( saveFileName )
@@ -185,6 +293,8 @@ function fileRW.getTable()
 	
 	return retTbl
 end
+
+
 
 -- get record id (record number) by field name and value
 function fileRW.getRowIdByField( fieldName, value )
