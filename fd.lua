@@ -712,9 +712,6 @@ function flyData.onFlightStart(wgt)
 		flyData.SavedClear()
 	end
 	
-	-- TODO: Ez nem a settings ben van?  Figyelmeztetés ha felszálláskor nincs kiválasztott aksi.
-	-- settings.getWarnFlyBegin( )  => flyData.warnFlyBegin
-	
 	if flyData.warnFlyBegin and 
 		flyData.selectedBatteryRecNum == 0 then
 	
@@ -912,7 +909,7 @@ function flyData.mAhReadSensor( wgt )
 		-- app.d.log( "uM:MaxAMP " , uM , "mAhReadSensor()") 
 		
 		-- TODO: Csak teszt RightSlider (RS)-hez vagy S2-höz
-		uM = uM + 1024
+		-- uM = uM + 1024
 
 		
 		if uM ~= nil and uM >= 0 then

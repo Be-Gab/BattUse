@@ -11,6 +11,9 @@
 ## License GNU General Public License v3.0                               ##
 #########################################################################]]
 local appName = ...
+local logF = nil
+local LF = "\r\n"
+local logDir = "/APPLOG/"
 local d = {}
 
 function d.log( s , v, hely )
@@ -43,6 +46,15 @@ function d.log( s , v, hely )
 	else
 		print( ido .. ":" .. appName .. ": " .. s ) 
 	end
+	
+	if logF ~= nil then
+		if hely then
+			io.write(  logF, ido .. ":" .. " [" .. hely .. "]: " .. s .. LF  ) 
+		else
+			io.write(  logF, ido .. ":" .. s .. LF  ) 
+		end
+	end
+	
 end
 
 function d.printAssoc( msg , tbl, showFunctions, tab )
@@ -58,13 +70,10 @@ function d.printAssoc( msg , tbl, showFunctions, tab )
 	
 	for key, value in pairs( tbl) do
 
-
 		if type( value ) == "table" then
 			d.printAssoc( key , value, showFunctions, tab + 1 )
 		 
 		else
-		
-
 			-- d.log( "Teszt:"..msg..":" , key )
 
 			if type( value ) == "function" then
@@ -83,5 +92,16 @@ function d.printAssoc( msg , tbl, showFunctions, tab )
 
 end
 
-return d
 
+function d.setLogFile( logFile )
+	local dt = getDateTime()
+	-- local dts = string.format( "_%02d%02d%02d_" , dt.hour, dt.min  , dt.sec ) 
+	local dts = string.format( "_%04d%02d%02d" , dt.year, dt.mon, dt.day ) 
+	
+	
+	
+	logF = io.open( logDir .. logFile .. dts .. ".log" , "a" )
+	io.write(  logF, " ======================================================================" .. LF  ) 
+end
+
+return d 
