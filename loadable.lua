@@ -13,7 +13,7 @@
 local zone, options, app , settings, flyData = ...
 
 local widget = {}
-widget.options = options
+widget.options = options 
 widget.zone		= zone
 
 local dt
