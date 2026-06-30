@@ -92,7 +92,6 @@ function d.printAssoc( msg , tbl, showFunctions, tab )
 
 end
 
-
 function d.setLogFile( logFile )
 	local dt = getDateTime()
 	-- local dts = string.format( "_%02d%02d%02d_" , dt.hour, dt.min  , dt.sec ) 
