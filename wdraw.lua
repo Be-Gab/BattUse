@@ -632,6 +632,15 @@ function dispMaxAmp( widget )
 end
 
 function dispBatteryPercent( widget )
+	local state
+	local st = {}
+	st.NODATA			= 0
+	st.BEFORE_START_LOW_BATTERY	= 1
+	st.BEFORE_START	= 2
+	st.START				= 3
+	st.START_END		= 4
+	
+	state = st.NODATA
 	
 	-- app.d.printAssoc( ".zone " , widget.zone , "dispBatteryPercent()" )
 
@@ -641,11 +650,79 @@ function dispBatteryPercent( widget )
 		
 		-- local SHIFT = 16
 		-- local BCK_SHIFT = math.min( 4 , ( widget.zone.h - SHIFT ) / 20 )
+
+--[[#######################################################################
+ Ami kéne:
+	Első felszállás elött (flyData.flightStartTime == nil ) 
+	és az aksi csatlakoztatott flyData.batStatus = BATTERY_CONNECTED
+	és feszültsége alacsonyabb a settings.getMinBatStartVolt( )
+	
+		Teljes háttér piros
+		Cimke fehér
+		Volt sárga
+		Százalék Sárga
+	 
+	Egyébként ( Felszállás után )
+	
+		Teljes háttér piros
+		Cimke fehér
+		Volt sárga
+		Százalék Sárga
+
+	Egyébként ( Leszállás után )
+	 
+		Teljes háttér normál
+		Cimke fehér
+		Volt sárga
+		Százalék Sárga
+		
+-----------------
+	Állapotok:
+		Start elött
+			Aksi nincs összedugva
+			Aksi adatokkal
+				Alacsony töltöttség
+				Normál töltöttség
+		Start közben
+		Start végén - pillanatnyi, utolsó adat
+		
+		lehet e egyszer számítani az állapotokat és utána felhasználni az összes elemben??
+		LEHET!LEHET!
+		
+#########################################################################]]		
 		
 		
 	   widget.ui = lvgl.build({
-			{	type		= "box", 
-				align		= CENTER, 
+			{	type		=	"rectangle" , 
+				align		=	CENTER , 
+				thickness=	0 ,
+				filled	=	function()
+									
+									if flyData.flightStartTime == nil then
+									
+										if  flyData.batStatus = BATTERY_CONNECTED then
+											if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then
+												state = st.BEFORE_START_LOW_BATTERY
+											else
+												state = st.BEFORE_START
+											end
+										end
+
+									elseif flyData.saved.isSaved then -- LEszállUtán
+										state = st.START
+									else			-- repül
+										state = st.START_END
+									end
+									
+									return st.BEFORE_START_LOW_BATTERY == state;
+									
+								end, 
+				color		=	function()
+									local c = COLOR_THEME_SECONDARY1;
+									-- state = st.BEFORE_START_LOW_BATTERY;
+									--app.d.log( "state" , state , "in color fv()" )
+									return c;
+								end,
 				children = {
 					{	type		= "box",
 						children = {
@@ -654,7 +731,7 @@ function dispBatteryPercent( widget )
 								-- align	= LEFT ,
 								font	= SMLSIZE ,
 								w		= 60 * lvgl.LCD_SCALE,
-								text	=	"Battery Volt"
+								text	=	"Battery Volt" 
 							}
 							,
 							{	type	= "label" , 
@@ -678,7 +755,7 @@ function dispBatteryPercent( widget )
 														s = s .. ", HV"
 													end
 												end;
-												return s;
+												return s .. state;
 											end ,
 							}
 						}
@@ -693,6 +770,15 @@ function dispBatteryPercent( widget )
 								w		= widget.zone.w , 
 								font	=  flyData.fontSize( widget.zone.h ) , 
 								align	= CENTER, --  + VCENTER, 
+								color	=	function()
+												local c = COLOR_THEME_SECONDARY1;
+												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
+													if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then;
+														c = RED;
+													end;
+												end;
+												return c;
+											end ,								
 								text	=	function()
 												local s = "--";
 												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;

@@ -167,6 +167,7 @@ function flyData.setWarningBatDisconnectOnFly( p )
 end
 
 function flyData.setMinBatStartVolt( p )
+	-- percent value
 	flyData.minBatStartVolt = p
 end
 
