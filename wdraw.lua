@@ -696,32 +696,27 @@ function dispBatteryPercent( widget )
 			{	type		=	"rectangle" , 
 				align		=	CENTER , 
 				thickness=	0 ,
+				color		=	COLOR_THEME_WARNING,
 				filled	=	function()
 									
 									if flyData.flightStartTime == nil then
+
+										state = st.BEFORE_START
 									
-										if  flyData.batStatus = BATTERY_CONNECTED then
+										if  flyData.IsBatteryConnected()  then
 											if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then
 												state = st.BEFORE_START_LOW_BATTERY
-											else
-												state = st.BEFORE_START
 											end
 										end
 
 									elseif flyData.saved.isSaved then -- LEszállUtán
-										state = st.START
-									else			-- repül
 										state = st.START_END
+									else			-- repül
+										state = st.START
 									end
 									
-									return st.BEFORE_START_LOW_BATTERY == state;
+									return ( st.BEFORE_START_LOW_BATTERY == state );
 									
-								end, 
-				color		=	function()
-									local c = COLOR_THEME_SECONDARY1;
-									-- state = st.BEFORE_START_LOW_BATTERY;
-									--app.d.log( "state" , state , "in color fv()" )
-									return c;
 								end,
 				children = {
 					{	type		= "box",
@@ -731,7 +726,14 @@ function dispBatteryPercent( widget )
 								-- align	= LEFT ,
 								font	= SMLSIZE ,
 								w		= 60 * lvgl.LCD_SCALE,
-								text	=	"Battery Volt" 
+								text	=	"Battery Volt" ,
+								color	=	function()
+												c = COLOR_THEME_PRIMARY3
+												if state == st.BEFORE_START_LOW_BATTERY then
+													c = WHITE
+												end
+												return c
+											end
 							}
 							,
 							{	type	= "label" , 
@@ -739,7 +741,7 @@ function dispBatteryPercent( widget )
 								align	= RIGHT ,
 								font	= 0 ,
 								color	=	function()
-												local c = COLOR_THEME_SECONDARY1;
+												local c = COLOR_THEME_SECONDARY3;
 												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
 													if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then;
 														c = RED;
@@ -771,11 +773,9 @@ function dispBatteryPercent( widget )
 								font	=  flyData.fontSize( widget.zone.h ) , 
 								align	= CENTER, --  + VCENTER, 
 								color	=	function()
-												local c = COLOR_THEME_SECONDARY1;
-												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
-													if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then;
-														c = RED;
-													end;
+												local c = COLOR_THEME_SECONDARY3;
+												if  state == st.BEFORE_START_LOW_BATTERY then;
+													c = COLOR_THEME_WARNING;
 												end;
 												return c;
 											end ,								
