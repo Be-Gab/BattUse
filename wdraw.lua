@@ -642,6 +642,9 @@ function dispBatteryPercent( widget )
 	
 	state = st.NODATA
 	
+	-- app.d.log( "widget.zone.h" , widget.zone.h, "dispBatteryPercent()" )
+	-- app.d.log( "flyData.fontSize( widget.zone.h )" , flyData.fontSize( widget.zone.h ) , "dispBatteryPercent()" )
+	
 	-- app.d.printAssoc( ".zone " , widget.zone , "dispBatteryPercent()" )
 
 	if widget.zone.h >= 40 then	-- 40 !
@@ -723,16 +726,17 @@ function dispBatteryPercent( widget )
 						children = {
 							{	type	= "label" ,
 								w		= widget.zone.w ,
+								x		= 10 * lvgl.LCD_SCALE,
 								-- align	= LEFT ,
 								font	= SMLSIZE ,
 								w		= 60 * lvgl.LCD_SCALE,
 								text	=	"Battery Volt" ,
 								color	=	function()
-												c = COLOR_THEME_PRIMARY3
-												if state == st.BEFORE_START_LOW_BATTERY then
-													c = WHITE
-												end
-												return c
+												c = COLOR_THEME_PRIMARY3;
+												if state == st.BEFORE_START_LOW_BATTERY then;
+													c = WHITE;
+												end;
+												return c;
 											end
 							}
 							,
@@ -742,22 +746,29 @@ function dispBatteryPercent( widget )
 								font	= 0 ,
 								color	=	function()
 												local c = COLOR_THEME_SECONDARY3;
-												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
+												
+												if state == st.BEFORE_START_LOW_BATTERY then;
+													c = WHITE;
+	
+												elseif state == st.START_END then;
+	
 													if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then;
 														c = RED;
 													end;
+													
 												end;
+												
 												return c;
 											end ,
 								text	=	function()
 												local s = "";
 												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
-													s = math.floor( flyData.batVoltReadSensor() )  .. " V " 
-													if flyData.isHV() then
-														s = s .. ", HV"
-													end
+													s = math.floor( flyData.batVoltReadSensor() )  .. " V " ;
+													if flyData.isHV() then;
+														s = s .. ", HV";
+													end;
 												end;
-												return s .. state;
+												return s;
 											end ,
 							}
 						}
@@ -770,12 +781,12 @@ function dispBatteryPercent( widget )
 							{	type	= "label", 
 								-- y = 16,
 								w		= widget.zone.w , 
-								font	=  flyData.fontSize( widget.zone.h ) , 
-								align	= CENTER, --  + VCENTER, 
+								font	= flyData.fontSize( widget.zone.h ) , 
+								align	= CENTER + VCENTER, 
 								color	=	function()
 												local c = COLOR_THEME_SECONDARY3;
 												if  state == st.BEFORE_START_LOW_BATTERY then;
-													c = COLOR_THEME_WARNING;
+													c = YELLOW;
 												end;
 												return c;
 											end ,								
