@@ -102,7 +102,7 @@ end
 
 function flyData.fontSize( f )
 	-- h = 22, -- SMLSIZE
-	-- h = 26, -- 0
+	-- h = 26, -- 0 -- Normal
 	-- h = 34, -- MIDSIZE
 	-- h = 80, -- XXLSIZE
 
