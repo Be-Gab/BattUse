@@ -25,15 +25,15 @@ local logLines  = loadScript( app.dir .. "csvfile.lua" )()
 local LOG_PATHS		=	{	[1]	=	"/LOGS/" ,
 							[2]	=	app.dir .. "LOGS/" }
 
-local PERCENTS_COUNT	= 6
+local PERCENTS_COUNT		= 6
 local LOG_MAX_ROW_COUNT = 10 --20 -- 20  
 local PAGE_HEAD_HEIGH	= 40 * lvgl.LCD_SCALE 
 
 local PAGE_WIDGET		= 1
 local PAGE_BATSELECT	= 2
-local PAGE_SETINPUT		= 3
-local PAGE_BEHAVIOR		= 4
-local PAGE_LOG_VIEW		= 5
+local PAGE_SETINPUT	= 3
+local PAGE_BEHAVIOR	= 4
+local PAGE_LOG_VIEW	= 5
 
 --################# batFile + CSV
 
@@ -1329,7 +1329,6 @@ function widget.logViewPage(widget, options)
 	
 	return ui
 end
-
 
 function widget.switchPage(id, widget, options)
 

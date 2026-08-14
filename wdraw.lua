@@ -32,6 +32,7 @@ function dispBatteryID( widget )
 					children = {
 							{	type	= "label", 
 								w		= widget.zone.w , 
+								x		= 6 * lvgl.LCD_SCALE,
 								align	= LEFT, 
 								font	= SMLSIZE,
 								text	=	function(s)
@@ -177,18 +178,22 @@ function dispLastUseDateTime( widget )
 	
    widget.ui = lvgl.build({
 		{	type		= "box", 
-			flexFlow	= lvgl.FLOW_COLUMN,
+			-- flexFlow	= lvgl.FLOW_COLUMN,
 			align		= CENTER, 
+			w		= widget.zone.w ,
+			h		= widget.zone.h ,
+			
 			children = {
 				{	type	= "label", 
 					w		= widget.zone.w , 
+					x		= 6 * lvgl.LCD_SCALE,
 					align	= LEFT, 
 					font	= SMLSIZE,
 					text	= "Last use" 					
 				}	,
 				{	type	= "label", 
 					w		= widget.zone.w , 
-					align = CENTER, 
+					align = CENTER + VCENTER, 
 					font	=  MIDSIZE, --0,
 					color =	function()
 									local dtColor = COLOR_THEME_SECONDARY1;
@@ -229,9 +234,9 @@ function dispStartCount( widget )
 					align	= CENTER, 
 					children= {
 						{	type	= "label", 
-							w		= widget.zone.w , 
 							align	= LEFT, 
-							w		= 70 * lvgl.LCD_SCALE,
+							w		= 60 * lvgl.LCD_SCALE,
+							x		= 6  * lvgl.LCD_SCALE,
 							font	= SMLSIZE,
 							text	= "Battery flight count"	
 						}	
@@ -597,6 +602,7 @@ function dispMaxAmp( widget )
 					children = {
 							{	type	= "label", 
 								w		= widget.zone.w , 
+								x		= 6 * lvgl.LCD_SCALE,
 								align	= LEFT, 
 								font	= SMLSIZE,
 								text	=	"Max current draw"	
@@ -700,6 +706,7 @@ function dispBatteryPercent( widget )
 				align		=	CENTER , 
 				thickness=	0 ,
 				color		=	COLOR_THEME_WARNING,
+				rounded	= 8 * lvgl.LCD_SCALE ,
 				filled	=	function()
 									
 									if flyData.flightStartTime == nil then
@@ -726,13 +733,13 @@ function dispBatteryPercent( widget )
 						children = {
 							{	type	= "label" ,
 								w		= widget.zone.w ,
-								x		= 10 * lvgl.LCD_SCALE,
+								x		= 6 * lvgl.LCD_SCALE,
 								-- align	= LEFT ,
 								font	= SMLSIZE ,
 								w		= 60 * lvgl.LCD_SCALE,
 								text	=	"Battery Volt" ,
 								color	=	function()
-												c = COLOR_THEME_PRIMARY3;
+												c = COLOR_THEME_SECONDARY1;
 												if state == st.BEFORE_START_LOW_BATTERY then;
 													c = WHITE;
 												end;
@@ -741,11 +748,11 @@ function dispBatteryPercent( widget )
 							}
 							,
 							{	type	= "label" , 
-								w		= widget.zone.w , 
+								w		= widget.zone.w - ( 6 * lvgl.LCD_SCALE ) , 
 								align	= RIGHT ,
 								font	= 0 ,
 								color	=	function()
-												local c = COLOR_THEME_SECONDARY3;
+												local c = COLOR_THEME_SECONDARY1;
 												
 												if state == st.BEFORE_START_LOW_BATTERY then;
 													c = WHITE;
@@ -784,7 +791,7 @@ function dispBatteryPercent( widget )
 								font	= flyData.fontSize( widget.zone.h ) , 
 								align	= CENTER + VCENTER, 
 								color	=	function()
-												local c = COLOR_THEME_SECONDARY3;
+												local c = COLOR_THEME_SECONDARY1;
 												if  state == st.BEFORE_START_LOW_BATTERY then;
 													c = YELLOW;
 												end;
@@ -999,7 +1006,7 @@ function dispLandingTarget( widget )
 					align	= CENTER, 
 					children= {
 						{	type	= "label", 
-							w		= widget.zone.w , 
+							x		= 6 * lvgl.LCD_SCALE,
 							align	= LEFT, 
 							font	= SMLSIZE,
 							w		= 60 * lvgl.LCD_SCALE ,
@@ -1029,8 +1036,6 @@ function dispLandingTarget( widget )
 	
 	
 end
-
-
 
 function dispError( widget )
 	 

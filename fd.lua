@@ -641,9 +641,9 @@ function flyData.onBatteryConnectEvent(wgt, batVolt)
 		then
 	
 		--  PlaySound
-		app.d.log( "play => BATTERY_WARN_ONCONNECT_SOUND:" , BATTERY_WARN_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
-		app.d.log( "flyData.batteryRec.id:" ,  flyData.batteryRec.id , "flyData.onBatteryConnectEvent()"  )
-		app.d.log( "not flyData.batteryRec.id:" , not flyData.batteryRec.id , "flyData.onBatteryConnectEvent()"  )
+		-- app.d.log( "play => BATTERY_WARN_ONCONNECT_SOUND:" , BATTERY_WARN_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
+		-- app.d.log( "flyData.batteryRec.id:" ,  flyData.batteryRec.id , "flyData.onBatteryConnectEvent()"  )
+		-- app.d.log( "not flyData.batteryRec.id:" , not flyData.batteryRec.id , "flyData.onBatteryConnectEvent()"  )
 		playFile( BATTERY_WARN_ONCONNECT_SOUND )
 
 	end

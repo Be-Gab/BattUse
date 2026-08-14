@@ -70,9 +70,10 @@ local function create(zone, options )
 		-- app.d.log( "flyData.selBatteryName" , flyData.selBatteryName , "create()" )
 
 		-- ================================================================================
+		-- Load only once
 		
 		flyData, errMsg = loadScript( app.dir .. "fd.lua" )( app , batFile ) 
-
+		
 		if errMsg then
 			print( ":BattUse : FD load error:" ..  errMsg )
 			widget.errMsg = errMsg
