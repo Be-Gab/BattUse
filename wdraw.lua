@@ -345,7 +345,7 @@ function dispFlyTime( widget )
 
 end
 
-function dispMahPercent( widget )
+function dispMahPercent( widget )				--	Remaining charge
 	-- [Kirepülhető mAh]	[Kirepült mAh]
 	-- 		Csík a %-al
 	--	[Induló %]	[ Tervezett vége %]
@@ -732,9 +732,7 @@ function dispBatteryPercent( widget )
 					{	type		= "box",
 						children = {
 							{	type	= "label" ,
-								w		= widget.zone.w ,
 								x		= 6 * lvgl.LCD_SCALE,
-								-- align	= LEFT ,
 								font	= SMLSIZE ,
 								w		= 60 * lvgl.LCD_SCALE,
 								text	=	"Battery Volt" ,
@@ -769,12 +767,23 @@ function dispBatteryPercent( widget )
 											end ,
 								text	=	function()
 												local s = "";
-												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
-													s = math.floor( flyData.batVoltReadSensor() )  .. " V " ;
-													if flyData.isHV() then;
+												
+												if flyData.saved.isSaved then;
+													s = s .. flyData.saved.batVoltEnd;
+													if flyData.saved.isHV then;
 														s = s .. ", HV";
 													end;
+												else;
+												
+													if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
+														s = math.floor( flyData.batVoltReadSensor() )  .. " V " ;
+														if flyData.isHV() then;
+															s = s .. ", HV";
+														end;
+													end;
+													
 												end;
+												
 												return s;
 											end ,
 							}
@@ -798,10 +807,18 @@ function dispBatteryPercent( widget )
 												return c;
 											end ,								
 								text	=	function()
-												local s = "--";
-												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
-													s = flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) .. "%";
+												local s = "";
+
+												if flyData.saved.isSaved then;
+													s = s .. flyData.saved.batPercentEnd .."%";
+												else;
+													
+													if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
+														s = flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) .. "%";
+													end;
+												
 												end;
+												
 												return s;
 											end
 							}

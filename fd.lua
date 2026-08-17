@@ -208,11 +208,17 @@ function flyData.getCells()
 end
 
 function flyData.isHV()
-	-- Ha van kiválasztott aksi, akkor onnan, ha nincs akkor nem HV.
-	if flyData.selectedBatteryRecNum > 0 then
-		return ( flyData.batteryRec.maxVolt > 4.2 )
+
+	if flyData.saved.isSaved then
+		return flyData.saved.isHV
 	else
-		return false
+
+		-- Ha van kiválasztott aksi, akkor onnan, ha nincs akkor nem HV.
+		if flyData.selectedBatteryRecNum > 0 then
+			return ( flyData.batteryRec.maxVolt > 4.2 )
+		else
+			return false
+		end
 	end
 end
 
@@ -329,9 +335,12 @@ function flyData.Save( wgt )
 		flyData.saved.batLastFlightFormated = ""
 		
 		flyData.saved.batFlightCount = "-"
+		flyData.saved.isHV = false
 		
 	else
 		-- Battery Selected
+		
+		flyData.saved.isHV = flyData.isHV()
 		
 		-- Formated date for widget
 		-- d.printAssoc( "flyDataSave()" , flyData )
@@ -857,11 +866,11 @@ function flyData.mAhCalcFlyable()
 		
 		flyData.mAhUsable = math.floor( usableCapacity - targetCapacity )
 		
-		-- d.log( "mAhFlyableCalc() :: startBatPercent =" , startBatPercent )
-		-- d.log( "mAhFlyableCalc() :: flyData.batteryRec.capacity =" , flyData.batteryRec.capacity )
-		-- d.log( "mAhFlyableCalc() :: usableCapacity =" , usableCapacity )
-		-- d.log( "mAhFlyableCalc() :: targetCapacity =" , targetCapacity )
-		-- app.d.log( "FlyableMAh" , flyData.mAhUsable , "mAhFlyableCalc()" )
+		app.d.log( "mAhFlyableCalc() :: startBatPercent =" , startBatPercent )
+		app.d.log( "mAhFlyableCalc() :: flyData.batteryRec.capacity =" , flyData.batteryRec.capacity )
+		app.d.log( "mAhFlyableCalc() :: usableCapacity =" , usableCapacity )
+		app.d.log( "mAhFlyableCalc() :: targetCapacity =" , targetCapacity )
+		app.d.log( "FlyableMAh" , flyData.mAhUsable , "mAhFlyableCalc()" )
 
 	else
 		flyData.mAhUsable = nil
