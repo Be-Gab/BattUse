@@ -20,12 +20,20 @@ cbm.cbmFile		= ""			-- object :: cbm.csvLuaFile
 
 function cbm.load( csvLuaFile , csvFile )
 	cbm.csvLuaFile	=	csvLuaFile
-	cbm.csvFile	=	cbmFile
-
-	cbm.cbmFile  =	loadScript( cbm.csvLuaFile )()
-	cbm.cbmFile.readCsv( cbm.csvFile )	
+	cbm.csvFile	=	csvFile
 	
-	cbm.data = cbm.getTable()
+	cbm.cbmFile  =	loadScript( cbm.csvLuaFile )()	
+	cbm.cbmFile.readCsv( cbm.csvFile )	
+
+	t = cbm.cbmFile.getTable()
+	
+	cbm.data = {}
+	for _ , aT in pairs( t ) do
+		if cbm.data[ aT.batID ] == nil then
+			cbm.data[ aT.batID ]	= {}
+		end
+		cbm.data[ aT.batID ][ aT.modelID ]	= true
+	end
 	
 end
 
@@ -37,24 +45,25 @@ function cbm.save()
 	
 		for modelID, v in pairs( aModels ) do
 			if v then
-				cbm.cbmFile.addRow( { batID, modelID } )
+				cbm.cbmFile.addRow( {	["batID"]	= batID ,
+												["modelID"] = modelID	} )
 			end
 		end
 		
 	end
 
-	cbm.cbmFile.Save()
+	cbm.cbmFile.writeCsv()
 end
 
 function cbm.addConnect( batID , modelID )
-	if #cbm.data[batID] == 0 then
+	if cbm.data[batID] == nil then
 		cbm.data[batID]	= {}
 	end
 	cbm.data[batID][modelID]	= true
 end
 
 function cbm.delConnect( batID , modelID )
-	if #cbm.data[batID] > 0 then
+	if cbm.data[batID] ~= nil then
 		cbm.data[batID][modelID]	= false
 	end
 end
@@ -62,28 +71,60 @@ end
 function cbm.removeModel( modelID )
 end
 
-function cbm.setModelBatteries( batID , aModels )
+-- store all modell what connected to the battery, Param aModels = { m1ID, m2ID, ..}
+-- Overwrite all Battery==batID model connection
+function cbm.setBatteryModels( batID , aModels )
+	cbm.data[batID] = aModels 
 end
 
-
+function cbm.getBatteryModels( batID  )
+	return cbm.data[batID]
+end
 
 function cbm.getModelBatteries( modelID )
 	local batIDs	= {}
+
+	for bID, aModels in pairs( cbm.data ) do
 	
+		for mID, v in pairs( aModels ) do
+			if v and mID == modelID then
+				table.insert( batIDs , bID )
+			end
+		end
+		
+	end
+
 	return batIDs
 end
 
-function cbm.getBatteryModels( batID )
-	return cbm.data[batID]
-end
 
 
 
 
 
 function cbm.test()
+
 	cbm.load( 	"/WIDGETS/BattUse/csvfile.lua" , 
-					"/WIDGETS/BattUse/batfiles/batteries.csv"	)
+					"/WIDGETS/BattUse/batfiles/batmodel.csv"	)
+
+	cbm.addConnect(  "ZZ-001" , 4 )	
+	cbm.addConnect(  "ZZ-002" , 4 )	
+	cbm.addConnect(  "ZZ-002" , 8 )	
+	cbm.addConnect(  "ZZ-003" , 5 )	
+	
+	zz = cbm.getBatteryModels( "ZZ-002"  )	
+	app.d.printAssoc( "zz-002" , zz )
+	cbm.setBatteryModels( zz )	
+
+	app.d.printAssoc( "cbm.data" , cbm.data )
+	
+	app.d.printAssoc( "getModelBatteries() :: 4" , cbm.getModelBatteries( 4 ) )
+
+	cbm.delConnect( "ZZ-002" , 4 )	
+	cbm.delConnect( "ZZ-002" , 8 )	
+
+	-- app.d.printAssoc( "cbm.data" , cbm.data )
+	
 	cbm.save()
 end
 
