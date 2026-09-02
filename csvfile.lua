@@ -11,7 +11,7 @@
 ###########################################################################
 ## License GNU General Public License v3.0                               ##
 #########################################################################]]
-local app_ver = "0.5"
+local app_ver = "0.6"
 local fileRW = {}
 
 local string_gsub = string.gsub 
@@ -243,7 +243,7 @@ function fileRW.updateRow( rowID , newRow )
 end
 
 -- Csak azok a mezők kerülnek be, amik szerepelnek a fejlécben
--- create new record filled with fields in [newRow] (new field not creatable)
+-- create new record filled with fields in [newRow] (can't create new field )
 function fileRW.addRow( newRow )
 	local newRowID = #fileLines + 1 
 	
@@ -274,6 +274,13 @@ function fileRW.delRow( rowID )
 		return table.remove( fileLines, rowID );
 	end
 		
+end
+
+-- delete all record without heading 
+function fileRW.clearData()
+
+	fileLines	= {}
+
 end
 
 -- get fields value of the specified record in [rowID] 
