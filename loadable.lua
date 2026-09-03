@@ -565,27 +565,27 @@ function widget.setInputPage(widget, options)
 	lvgl.clear();
 			
 	uit =	{
-				{	type = "rectangle",
-					thickness = 0 ,
-					flexFlow = lvgl.FLOW_ROW, 
-					children = {
-						{	type	= "label", 
-							text	= "Battery file" 
-						}
-						,
-						{	type	= "choice",  
-							w		= 260 * lvgl.LCD_SCALE,
-							title = "Select battery file",
-							values= settings.listBatfiles() ,
-							get = (function( ) return settings.getBattFileID(   ); end) , 
-							set =	function(s)        
-										settings.setBattFileID( s ); 
-										flyData.readBatteryFile( settings.getBattFileFullPath() );
-									end	
-						} 
-					}
-				}
-				,
+				-- {	type = "rectangle",
+					-- thickness = 0 ,
+					-- flexFlow = lvgl.FLOW_ROW, 
+					-- children = {
+						-- {	type	= "label", 
+							-- text	= "Battery file" 
+						-- }
+						-- ,
+						-- {	type	= "choice",  
+							-- w		= 260 * lvgl.LCD_SCALE,
+							-- title = "Select battery file",
+							-- values= settings.listBatfiles() ,
+							-- get = (function( ) return settings.getBattFileID(   ); end) , 
+							-- set =	function(s)        
+										-- settings.setBattFileID( s ); 
+										-- flyData.readBatteryFile( settings.getBattFileFullPath() );
+									-- end	
+						-- } 
+					-- }
+				-- }
+				-- ,
 				{	type = "rectangle",
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 

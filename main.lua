@@ -45,10 +45,12 @@ local options =	{
 
 local function create(zone, options )
 	local mi = model.getInfo()
-	local modelConfigFile = string.format( "%s/%s.cfg"   , app.dir , mi.name )
+	local modelConfigFile = string.sub( mi.filename , 1, -5) .. ".cfg"
 	local errMsg
 
-	print( ":BattUse: Create() Widget Start. Model:" .. mi.name  )
+	app.currentModelID = tonumber( string.match( modelConfigFile , "(%d+)") )
+
+	print( ":BattUse: Create() Widget Start. Model:" .. mi.name .. ", id:" .. app.currentModelID )
 	
 	if (lvgl == nil) then
 		return {zone = zone, options = options, name = app.name }

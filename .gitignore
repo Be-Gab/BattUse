@@ -10,5 +10,8 @@
 /batfiles/*
 !/batfiles/.gitkeep
 
+#models dir empty
+/models/*
+!/models/.gitkeep
 
 *.cfg

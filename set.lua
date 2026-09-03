@@ -15,6 +15,8 @@ local settings = {}
 
 local PERCENTS_SEP_CHAR	= "|"
 local PERCENTS_COUNT		= 6
+local BATTERIES_FILE		= "batteries.csv"
+local BATMODEL_FILE		= "batmodel.csv"
 local BATTFILES_DIR		= app.dir .. "batfiles"
 local DEMO_BATT_FILENAME= "demo_batfile.csv"
 local TARGET_PERCENT_SLIDER_STEP = 5 
@@ -408,41 +410,41 @@ function settings.getSoundPercentAll()
 	return settings.soundPercent
 end
 
-function settings.setBattFile( s )
-	settings.battFile = s
-	settings.settingsSave()	
+-- function settings.setBattFile( s )
+	-- settings.battFile = s
+	-- settings.settingsSave()	
 	
-	-- Todo : Itt változik az aksi file, az újat be kell olvasni, friossíteni flyData -t.
-	-- Vagy : Itt:  widget.setInputPage(), ahol ez a kód részlet, meghívásra került
-end 
+	-- -- Todo : Itt változik az aksi file, az újat be kell olvasni, friossíteni flyData -t.
+	-- -- Vagy : Itt:  widget.setInputPage(), ahol ez a kód részlet, meghívásra került
+-- end 
  
 function settings.getBattFile( )
 	return settings.battFile
 end
 
 function settings.getBattFileFullPath( )
-	return BATTFILES_DIR .. "/" .. settings.battFile
+	return BATTFILES_DIR .. "/" .. BATTERIES_FILE
 end
 
-function settings.setBattFileID( n )
-	-- Batt listából a kiválasztott név kerül elmentésre a sorszám alapján
-	settings.setBattFile( settings.battFiles[ n ] )
+-- function settings.setBattFileID( n )
+	-- -- Batt listából a kiválasztott név kerül elmentésre a sorszám alapján
+	-- settings.setBattFile( settings.battFiles[ n ] )
 	
-end 
+-- end 
  
-function settings.getBattFileID()
-	-- filenév tárolva, de a listában a sorszáma kell..
-	local bf = settings.battFiles
-	local n = 1		-- default the first item
+-- function settings.getBattFileID()
+	-- -- filenév tárolva, de a listában a sorszáma kell..
+	-- local bf = settings.battFiles
+	-- local n = 1		-- default the first item
 
-	for i = 1, #bf do
-		if settings.battFile == bf[ i ] then
-			n = i
-		end
-	end
+	-- for i = 1, #bf do
+		-- if settings.battFile == bf[ i ] then
+			-- n = i
+		-- end
+	-- end
 
-	return n
-end
+	-- return n
+-- end
 
 function settings.setQuickSelChannel(  s )
 	settings.quickSelChannel = s
