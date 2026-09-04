@@ -53,7 +53,14 @@ function fileRW.readCsv(readFileName)
 		return nil
    end
 	
+	-- fileRW.log( "fileName:" ..fileName )
+	
    local file = io.open(fileName, "r")
+
+	if file == nil then
+		 fileRW.log("Hiba a fájl megnyitásakor : " .. fileName )
+		 return nil
+	end
 
 	buffer = io.read(file, 2048 * 32)  
 
@@ -78,7 +85,7 @@ function fileRW.readCsv(readFileName)
 		else
 			
 			-- Read DataLines
-			--fileRW.log( "itemId: " .. itemID )
+			-- fileRW.log( "itemId: " .. itemID )
 			 
 			local cnt = 1
 			local fields = {}

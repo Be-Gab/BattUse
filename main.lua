@@ -17,6 +17,7 @@ local app = {}
 app.name  = "BattUse"
 app.version = "v1.0.0 RC1"
 app.dir = "/WIDGETS/BattUse/"
+app.modelConfigPath	= "/WIDGETS/BattUse/models/"
 
 local settings	= {}
 local flyData	= {}
@@ -45,7 +46,7 @@ local options =	{
 
 local function create(zone, options )
 	local mi = model.getInfo()
-	local modelConfigFile = string.sub( mi.filename , 1, -5) .. ".cfg"
+	local modelConfigFile = app.modelConfigPath .. string.sub( mi.filename , 1, -5) .. ".cfg"
 	local errMsg
 
 	app.currentModelID = tonumber( string.match( modelConfigFile , "(%d+)") )

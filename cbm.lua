@@ -69,6 +69,23 @@ function cbm.delConnect( batID , modelID )
 end
 
 function cbm.removeModel( modelID )
+
+	for bID, aModels in pairs( cbm.data ) do
+	
+		for mID, v in pairs( aModels ) do
+			if v and mID == modelID then
+				cbm.data[bID][mID]	= false
+			end
+		end
+		
+	end
+	
+end
+
+function cbm.removeBattery( batID )
+
+	cbm.data[batID]	= false
+	
 end
 
 -- store all modell what connected to the battery, Param aModels = { m1ID, m2ID, ..}
@@ -101,7 +118,6 @@ end
 
 
 
-
 function cbm.test()
 
 	cbm.load( 	"/WIDGETS/BattUse/csvfile.lua" , 
@@ -122,9 +138,31 @@ function cbm.test()
 
 	cbm.delConnect( "ZZ-002" , 4 )	
 	cbm.delConnect( "ZZ-002" , 8 )	
-
-	-- app.d.printAssoc( "cbm.data" , cbm.data )
 	
+	-----------------------
+	
+	cbm.addConnect( "Bat99"	, 99 )
+	cbm.addConnect( "Bat99"	, 98 )
+	cbm.addConnect( "Bat99"	, 97 )
+
+	app.d.printAssoc( "cbm.data" , cbm.data )
+	
+	cbm.removeBattery( "Bat99" )
+
+	app.d.printAssoc( "cbm.data" , cbm.data )
+
+	cbm.addConnect( "Bat99"	, 99 )
+	cbm.addConnect( "Bat99"	, 98 )
+	cbm.addConnect( "Bat98"	, 99 )
+	cbm.addConnect( "Bat97"	, 99 )
+
+	app.d.printAssoc( "cbm.data" , cbm.data )
+	
+	cbm.removeModel( 99 )
+	
+	app.d.printAssoc( "cbm.data" , cbm.data )
+	
+	cbm.removeBattery( "Bat99" )
 	cbm.save()
 end
 

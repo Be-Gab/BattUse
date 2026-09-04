@@ -21,6 +21,7 @@ local BATTFILES_DIR		= app.dir .. "batfiles"
 local DEMO_BATT_FILENAME= "demo_batfile.csv"
 local TARGET_PERCENT_SLIDER_STEP = 5 
 
+-- TODO : Ennek a DEMO_BATT_FILENAME semmi értelme... hanincs batteries.csv csinálunk üres, újat.
 local battFiles = DEMO_BATT_FILENAME
 
 local function split(str, separator)
@@ -124,6 +125,7 @@ function settings.getBattFiles()
 end
 
 function settings.setFileName( fn )
+	app.d.log( "fn" , fn , "settings.setFileName()" )
 	filename = fn
 end
 
@@ -142,8 +144,6 @@ function settings.settingsLoad()
 		
 	end	
 	
-	-- app.d.printAssoc( "data" , data )
-	
 	-- Input page	
 	settings.batVoltSource			= data.batVoltSource	or 0
 	settings.batUsedMAhSource		= data.batUsedMAhSource	or 0	
@@ -156,7 +156,7 @@ function settings.settingsLoad()
 	settings.Timer						= data.Timer or 0
 
 	-- Behavior page or 1
-	settings.battFile					= data.battFile or DEMO_BATT_FILENAME
+	-- settings.battFile					= data.battFile or DEMO_BATT_FILENAME
 	settings.landingPercent			= data.landingPercent or 60
 	settings.logPath					= data.logPath	or 1
 	settings.dtFormat					= data.dtFormat or 1
@@ -188,12 +188,12 @@ function settings.settingsSave()
 		return false
 	end
 	
-	-- d.log("fejelc elött", 0 )
+	-- app.d.log("fejelc elött, filename =", filename )
 	
 	
 	io.write(	file, 
 					"batVoltSource,batUsedMAhSource,batMaxMAhSource,quickSelChannel,batBackupVolt,batCell,Timer,"  ..
-					"battFile,logPath,landingPercent,dtFormat,warnWhenBatConnect,warnFlyBegin,flyOverHapticSec," ..
+					"logPath,landingPercent,dtFormat,warnWhenBatConnect,warnFlyBegin,flyOverHapticSec," ..
 					"warningBatDissconnectOnFly,minBatStartVolt,warningBatOverUse,hapticPercent,soundPercent" ..
 					"\n"
 				)
@@ -213,7 +213,7 @@ function settings.settingsSave()
 					settings.batCell .. "," .. 
 					settings.Timer	.. "," .. 
 					
-					"\"" .. settings.getBattFile() .. "\"" .. "," ..
+					-- "\"" .. settings.getBattFile() .. "\"" .. "," ..
 					settings.logPath	.. "," ..
 					settings.landingPercent .. "," .. 
 					settings.dtFormat	 .. "," .. 
@@ -461,7 +461,7 @@ end
 settings.setFileName( filename )
 settings.settingsLoad()
 
---app.d.printAssoc( "settings" , settings )
+ app.d.printAssoc( "settings" , settings )
 
 settings.battFiles = settings.listBatfiles()
 
