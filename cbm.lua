@@ -43,17 +43,34 @@ function cbm.save()
 
 	for batID, aModels in pairs( cbm.data ) do
 	
-		for modelID, v in pairs( aModels ) do
-			if v then
-				cbm.cbmFile.addRow( {	["batID"]	= batID ,
-												["modelID"] = modelID	} )
+		if aModels then 			--- != nill
+	
+			for modelID, v in pairs( aModels ) do
+				if v then
+					cbm.cbmFile.addRow( {	["batID"]	= batID ,
+													["modelID"] = modelID	} )
+				end
 			end
+			
 		end
 		
 	end
 
 	cbm.cbmFile.writeCsv()
 end
+
+-- function cbm.isConnected( batID , modelID )
+	-- local is = false
+	
+	-- if cbm.data[batID] ~= nil then
+		-- if cbm.data[batID][modelID]	= true then
+			-- is = true
+		-- end
+	-- end
+	
+	-- return is
+-- end
+
 
 function cbm.addConnect( batID , modelID )
 	if cbm.data[batID] == nil then
@@ -71,10 +88,9 @@ end
 function cbm.removeModel( modelID )
 
 	for bID, aModels in pairs( cbm.data ) do
-	
 		for mID, v in pairs( aModels ) do
 			if v and mID == modelID then
-				cbm.data[bID][mID]	= false
+				cbm.data[bID][mID]	= nil
 			end
 		end
 		
@@ -120,50 +136,52 @@ end
 
 function cbm.test()
 
-	cbm.load( 	"/WIDGETS/BattUse/csvfile.lua" , 
-					"/WIDGETS/BattUse/batfiles/batmodel.csv"	)
+	-- cbm.load( 	"/WIDGETS/BattUse/csvfile.lua" , 
+					-- "/WIDGETS/BattUse/batfiles/batmodel.csv"	)
 
-	cbm.addConnect(  "ZZ-001" , 4 )	
-	cbm.addConnect(  "ZZ-002" , 4 )	
-	cbm.addConnect(  "ZZ-002" , 8 )	
-	cbm.addConnect(  "ZZ-003" , 5 )	
+	-- cbm.addConnect(  "ZZ-001" , 4 )	
+	-- cbm.addConnect(  "ZZ-002" , 4 )	
+	-- cbm.addConnect(  "ZZ-002" , 8 )	
+	-- cbm.addConnect(  "ZZ-003" , 5 )	
 	
-	zz = cbm.getBatteryModels( "ZZ-002"  )	
-	app.d.printAssoc( "zz-002" , zz )
-	cbm.setBatteryModels( zz )	
+	-- zz = cbm.getBatteryModels( "ZZ-002"  )	
+	-- app.d.printAssoc( "zz-002" , zz )
+	-- cbm.setBatteryModels( zz )	
 
-	app.d.printAssoc( "cbm.data" , cbm.data )
+	-- app.d.printAssoc( "cbm.data" , cbm.data )
 	
-	app.d.printAssoc( "getModelBatteries() :: 4" , cbm.getModelBatteries( 4 ) )
+	-- app.d.printAssoc( "getModelBatteries() :: 4" , cbm.getModelBatteries( 4 ) )
 
-	cbm.delConnect( "ZZ-002" , 4 )	
-	cbm.delConnect( "ZZ-002" , 8 )	
+	-- cbm.delConnect( "ZZ-002" , 4 )	
+	-- cbm.delConnect( "ZZ-002" , 8 )	
 	
-	-----------------------
+	-- ---------------------
 	
-	cbm.addConnect( "Bat99"	, 99 )
-	cbm.addConnect( "Bat99"	, 98 )
-	cbm.addConnect( "Bat99"	, 97 )
+	-- cbm.addConnect( "Bat99"	, 99 ) 
+	-- cbm.addConnect( "Bat99"	, 98 )
+	-- cbm.addConnect( "Bat99"	, 97 )
 
-	app.d.printAssoc( "cbm.data" , cbm.data )
+	-- app.d.printAssoc( "cbm.data" , cbm.data )
 	
-	cbm.removeBattery( "Bat99" )
+	-- app.d.log( "cbm.removeBattery( Bat99 )" , "" )
+	-- cbm.removeBattery( "Bat99" )
 
-	app.d.printAssoc( "cbm.data" , cbm.data )
+	-- app.d.printAssoc( "cbm.data" , cbm.data )
 
-	cbm.addConnect( "Bat99"	, 99 )
-	cbm.addConnect( "Bat99"	, 98 )
-	cbm.addConnect( "Bat98"	, 99 )
-	cbm.addConnect( "Bat97"	, 99 )
+	-- cbm.addConnect( "Bat99"	, 99 )
+	-- cbm.addConnect( "Bat99"	, 98 )
+	-- cbm.addConnect( "Bat98"	, 99 )
+	-- cbm.addConnect( "Bat97"	, 99 )
 
-	app.d.printAssoc( "cbm.data" , cbm.data )
+	-- app.d.printAssoc( "cbm.data" , cbm.data )
 	
-	cbm.removeModel( 99 )
+	-- app.d.log( "cbm.removeModel( 99 )" , "" )
+	-- cbm.removeModel( 99 )
 	
-	app.d.printAssoc( "cbm.data" , cbm.data )
+	-- app.d.printAssoc( "cbm.data" , cbm.data )
 	
-	cbm.removeBattery( "Bat99" )
-	cbm.save()
+	-- cbm.removeBattery( "Bat99" )
+	-- cbm.save()
 end
 
 return cbm
