@@ -59,19 +59,6 @@ function cbm.save()
 	cbm.cbmFile.writeCsv()
 end
 
--- function cbm.isConnected( batID , modelID )
-	-- local is = false
-	
-	-- if cbm.data[batID] ~= nil then
-		-- if cbm.data[batID][modelID]	= true then
-			-- is = true
-		-- end
-	-- end
-	
-	-- return is
--- end
-
-
 function cbm.addConnect( batID , modelID )
 	if cbm.data[batID] == nil then
 		cbm.data[batID]	= {}
@@ -107,11 +94,20 @@ end
 -- store all modell what connected to the battery, Param aModels = { m1ID, m2ID, ..}
 -- Overwrite all Battery==batID model connection
 function cbm.setBatteryModels( batID , aModels )
+	app.d.printAssoc( "setBatteryModels::aModels" , aModels )
+	
+	
+	tegyük ciklusba, elötte törölni,,
+	
 	cbm.data[batID] = aModels 
 end
 
 function cbm.getBatteryModels( batID  )
-	return cbm.data[batID]
+	if not ( cbm.data[batID] ) then
+		return {}
+	else
+		return cbm.data[batID]
+	end
 end
 
 function cbm.getModelBatteries( modelID )
@@ -183,5 +179,16 @@ function cbm.test()
 	-- cbm.removeBattery( "Bat99" )
 	-- cbm.save()
 end
+-- function cbm.isConnected( batID , modelID )
+	-- local is = false
+	
+	-- if cbm.data[batID] ~= nil then
+		-- if cbm.data[batID][modelID]	= true then
+			-- is = true
+		-- end
+	-- end
+	
+	-- return is
+-- end
 
 return cbm
