@@ -13,6 +13,16 @@
 local app = ...
 local cbm = {}
 
+
+-- csv file :
+--						batId, modelID 
+--						batId, modelID 
+--						batId, modelID 
+
+-- cbm.data :
+--						batId, { modelID, modelID , modelID } 
+--						batId, { modelID, modelID , modelID } 
+
 cbm.data		= {}			-- [batID][modelID] = true
 cbm.csvLuaFile	= ""			-- fullname of csvfile.lua
 cbm.csvFile		= ""			-- cbm data file : fullname of cbm.csv 
@@ -23,6 +33,9 @@ function cbm.load( csvLuaFile , csvFile )
 	cbm.csvFile	=	csvFile
 	
 	cbm.cbmFile  =	loadScript( cbm.csvLuaFile )()	
+	cbm.cbmFile.setFieldDataType(  1 , 2 )	-- First  field String = 2
+	cbm.cbmFile.setFieldDataType(  2 , 1 )	-- Second field Numeric = 1
+
 	cbm.cbmFile.readCsv( cbm.csvFile )	
 
 	t = cbm.cbmFile.getTable()
@@ -32,7 +45,8 @@ function cbm.load( csvLuaFile , csvFile )
 		if cbm.data[ aT.batID ] == nil then
 			cbm.data[ aT.batID ]	= {}
 		end
-		cbm.data[ aT.batID ][ aT.modelID ]	= true
+		table.insert( cbm.data[ aT.batID ] , aT.modelID  )
+		-- cbm.data[ aT.batID ][ aT.modelID ]	= true
 	end
 	
 end
@@ -40,21 +54,20 @@ end
 function cbm.save()
 
 	cbm.cbmFile.clearData()
-
+	
 	for batID, aModels in pairs( cbm.data ) do
 	
 		if aModels then 			--- != nill
-	
-			for modelID, v in pairs( aModels ) do
-				if v then
-					cbm.cbmFile.addRow( {	["batID"]	= batID ,
-													["modelID"] = modelID	} )
-				end
+			for k , modelID in pairs( aModels ) do
+
+				cbm.cbmFile.addRow( {	["batID"]	= batID ,
+												["modelID"] = modelID	} )
 			end
-			
 		end
 		
 	end
+
+	-- app.d.printAssoc( "cbm.save()::GetTable" , cbm.cbmFile.getTable() )
 
 	cbm.cbmFile.writeCsv()
 end
@@ -94,12 +107,9 @@ end
 -- store all modell what connected to the battery, Param aModels = { m1ID, m2ID, ..}
 -- Overwrite all Battery==batID model connection
 function cbm.setBatteryModels( batID , aModels )
-	app.d.printAssoc( "setBatteryModels::aModels" , aModels )
+
+	cbm.data[batID] = aModels
 	
-	
-	tegyük ciklusba, elötte törölni,,
-	
-	cbm.data[batID] = aModels 
 end
 
 function cbm.getBatteryModels( batID  )

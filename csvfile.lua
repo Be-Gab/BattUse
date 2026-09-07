@@ -3,7 +3,7 @@
 ##                                                                       ##
 ## Author:  BeGab                                                        ##
 ## Date:    2024-07-20                                                   ##
-## Version: 0.5.0                                                        ##
+## Version: 0.6.0                                                        ##
 ## URL : https://github.com/Be-Gab/BattUse                               ##
 ##                                                                       ##
 ##                      Copyright (C) "BeGab"                            ##
@@ -24,9 +24,9 @@ local LF = "\n"  			-- LineFeed
 local fieldNames = {}	-- fieldnames in indexed table
 local fieldPos = {}		-- fieldnames in associated table
 
-local fieldType = {}		-- field types, string or numeric
-local NUMERIC = 0
-local STRING  = 1
+local fieldType = {}		-- field types, string or numeric 
+local NUMERIC = 1
+local STRING  = 2
 
 --#########################################################################--
 
@@ -37,6 +37,12 @@ end
 function fileRW.log(s)
 --  return;
   print("BattUse: fileRW : " .. s)
+end
+
+-- 0 - numeric, 1 - string
+function fileRW.setFieldDataType( fieldPs, fieldTy )
+	-- fileRW.log("Ps, Ty : " .. fieldPs .. ", " .. fieldTy )
+	fieldType[ fieldPs ] = fieldTy
 end
 
 function fileRW.readCsv(readFileName)
@@ -97,20 +103,18 @@ function fileRW.readCsv(readFileName)
 
 				-- fileRW.log( "readCsv :: Line/field A: " .. itemID .. "/" .. cnt .. ":" .. v  .. "<>" .. val )
 
-				if val ~= v then
-					if itemID == 1 then
+				if itemID == 1 and fieldType[ cnt ] == nil then
+					if val ~= v then
 						fieldType[ cnt ] = STRING
-					end
-				else
-					if itemID == 1 then
+					else
 						fieldType[ cnt ] = NUMERIC
+						val = tonumber( val )
+						
+						-- if val == nil then
+							-- print( "fileRW.readCsv: Not numeric! (field:" , fieldNames[cnt]  , " value: [" , v , "] )" )
+						-- end 
+						
 					end
-					val = tonumber( val )
-					
-					-- if val == nil then
-						-- print( "fileRW.readCsv: Not numeric! (field:" , fieldNames[cnt]  , " value: [" , v , "] )" )
-					-- end 
-					
 				end
 			
 				fields[ fieldNames[cnt] ] = val
