@@ -1099,15 +1099,25 @@ function flyData.mAhActionClear()
 	
 end
 
-function flyData.readBatteryFile( batteryFile )
-	-- app.d.log( "batteryFile" , batteryFile , "flyData.readBatteryFile()" )
-	batFile.readCsv( batteryFile )
-	
+function flyData.readBatteryFile()
+
+	app.d.log( "app.batFilePath .. app.batFileName" , app.batFilePath .. app.batFileName , "readBatteryFile()" )
+
+	-- Check batFile exists	
+	if fstat( app.batFilePath .. app.batFileName ) == nil then
+		f=io.open( app.batFilePath .. app.batFileName ,"a")
+		
+		io.write( f , "id,maxCapacity,product,cells,maxVolt,earlyCount,count,firstStartDate,retireDate,lastStartDate,capacity" .. "\n"  )
+		io.close( f )
+	end
+
+	batFile.readCsv( app.batFilePath .. app.batFileName )
+
 	
 	-- Connect Battery Model -> read settings
 	local cbm = loadScript( app.dir .. "cbm.lua"   , "tbd" )( app )	
 	cbm.load(	app.dir .. "/csvfile.lua" , 
-					app.dir .. "/batfiles/batmodel.csv" )
+					app.cbmFilePath .. app.cbmFileName )
 
 	flyData.cbmData = cbm.getData()
 

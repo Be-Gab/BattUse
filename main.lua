@@ -17,7 +17,14 @@ local app = {}
 app.name  = "BattUse"
 app.version = "v1.0.0 RC1"
 app.dir = "/WIDGETS/BattUse/"
-app.modelConfigPath	= "/WIDGETS/BattUse/models/"
+app.modelConfigPath	= app.dir .. "models/"
+
+app.batFilePath	= app.dir .. "batfiles/"
+app.batFileName	= "batteries.csv"
+
+app.cbmFilePath	= app.dir .. "/batfiles/"
+app.cbmFileName	= "batmodel.csv"
+
 
 local settings	= {}
 local flyData	= {}

@@ -37,7 +37,7 @@ local PAGE_LOG_VIEW	= 5
 
 --################# batFile + CSV
 
-flyData.readBatteryFile( settings.getBattFileFullPath() )
+flyData.readBatteryFile()
 
 --################# batFile + CSV :: End
 
@@ -126,7 +126,7 @@ local function buttonCreate( bat, todayUsed, widget, options )
 	local BTN_CONT_WIDTH	= BTN_WIDTH - BTN_LEFT 
 	
 	local bat_also		= ( bat.count + bat.earlyCount ) .. " Flight"
-	local bat_felso	= bat.product .. " " .. bat.capacity .. " mAh " .. bat.cells .. "S "
+	local bat_felso	= bat.product .. " " .. bat.maxCapacity .. " mAh " .. bat.cells .. "S "
 	local hv, dateColor
 	
 	local isSelectedColor = COLOR_THEME_PRIMARY2
@@ -211,7 +211,7 @@ local function buttonCreate( bat, todayUsed, widget, options )
 										} ,
 										{	type	= "label", 
 											w		= 80 * lvgl.LCD_SCALE,
-											text	= bat.capacity .. " mAh"
+											text	= bat.maxCapacity .. " mAh"
 										} ,
 										{	type	= "label", 
 											w		= 65 * lvgl.LCD_SCALE,
@@ -548,11 +548,11 @@ function widget.pageHead( screenType, subUi, widget, options )
 end
 
 function widget.selectPage(widget, options)
-	local gombok = createButtons(widget, options)
+	local gombok
 	
-	-- app.d.log( "indul",3, "widget.selectPage()" )	
+	flyData.readBatteryFile()
 	
-	flyData.
+	gombok = createButtons(widget, options)
 
 	ui = widget.pageHead( PAGE_BATSELECT, gombok ,widget, options )
 	
@@ -569,27 +569,6 @@ function widget.setInputPage(widget, options)
 	lvgl.clear();
 			
 	uit =	{
-				-- {	type = "rectangle",
-					-- thickness = 0 ,
-					-- flexFlow = lvgl.FLOW_ROW, 
-					-- children = {
-						-- {	type	= "label", 
-							-- text	= "Battery file" 
-						-- }
-						-- ,
-						-- {	type	= "choice",  
-							-- w		= 260 * lvgl.LCD_SCALE,
-							-- title = "Select battery file",
-							-- values= settings.listBatfiles() ,
-							-- get = (function( ) return settings.getBattFileID(   ); end) , 
-							-- set =	function(s)        
-										-- settings.setBattFileID( s ); 
-										-- flyData.readBatteryFile( settings.getBattFileFullPath() );
-									-- end	
-						-- } 
-					-- }
-				-- }
-				-- ,
 				{	type = "rectangle",
 					thickness = 0 ,
 					flexFlow = lvgl.FLOW_ROW, 
