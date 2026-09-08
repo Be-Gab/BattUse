@@ -108,14 +108,16 @@ function fileRW.readCsv(readFileName)
 						fieldType[ cnt ] = STRING
 					else
 						fieldType[ cnt ] = NUMERIC
-						val = tonumber( val )
-						
-						-- if val == nil then
-							-- print( "fileRW.readCsv: Not numeric! (field:" , fieldNames[cnt]  , " value: [" , v , "] )" )
-						-- end 
-						
 					end
 				end
+				
+				-- if val == nil then
+					-- print( "fileRW.readCsv: Not numeric! (field:" , fieldNames[cnt]  , " value: [" , v , "] )" )
+				-- end 
+				
+				if fieldType[ cnt ] == NUMERIC then
+					val = tonumber( val )
+				end		
 			
 				fields[ fieldNames[cnt] ] = val
 				-- fileRW.log( "Line/field B: " .. itemID .. "/" .. cnt .. " : " .. fieldNames[cnt] .. " => "  .. tostring( val ) .. "/" .. v )

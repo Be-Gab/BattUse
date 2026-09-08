@@ -27,14 +27,15 @@ flyData = {
 								isSaved = false 
 							} ,
 				selectedBatteryRecNum = 0,
-				selBatteryName = "Select Battery" ,
-				batStatus = BATTERY_DISCONNECTED ,
-				batteryRec = {},
-				flightEndTime = nil,
+				selBatteryName	= "Select Battery" ,
+				batStatus		= BATTERY_DISCONNECTED ,
+				batteryRec		= {},
+				flightEndTime	= nil,
 				previousFlightMode = 0,
 				lastOverUseSec = nil,
-				dateFormat = 1,
+				dateFormat	= 1,
 				usedIsToday = false,
+				cbmData		= {} ,			-- Connect Battery -Model
 				
 				mAhUsable		= 0,
 				mAhUsed			= 0,
@@ -192,7 +193,6 @@ end
 function flyData.setUsedIsToday(l)
 	flyData.usedIsToday = l
 end
-
 
 function flyData.setQuickSelChannel(c)
 	flyData.quickSelChannel = c
@@ -866,11 +866,11 @@ function flyData.mAhCalcFlyable()
 		
 		flyData.mAhUsable = math.floor( usableCapacity - targetCapacity )
 		
-		app.d.log( "mAhFlyableCalc() :: startBatPercent =" , startBatPercent )
-		app.d.log( "mAhFlyableCalc() :: flyData.batteryRec.capacity =" , flyData.batteryRec.capacity )
-		app.d.log( "mAhFlyableCalc() :: usableCapacity =" , usableCapacity )
-		app.d.log( "mAhFlyableCalc() :: targetCapacity =" , targetCapacity )
-		app.d.log( "FlyableMAh" , flyData.mAhUsable , "mAhFlyableCalc()" )
+		-- app.d.log( "mAhFlyableCalc() :: startBatPercent =" , startBatPercent )
+		-- app.d.log( "mAhFlyableCalc() :: flyData.batteryRec.capacity =" , flyData.batteryRec.capacity )
+		-- app.d.log( "mAhFlyableCalc() :: usableCapacity =" , usableCapacity )
+		-- app.d.log( "mAhFlyableCalc() :: targetCapacity =" , targetCapacity )
+		-- app.d.log( "FlyableMAh" , flyData.mAhUsable , "mAhFlyableCalc()" )
 
 	else
 		flyData.mAhUsable = nil
@@ -1100,8 +1100,31 @@ function flyData.mAhActionClear()
 end
 
 function flyData.readBatteryFile( batteryFile )
-	app.d.log( "batteryFile" , batteryFile , "flyData.readBatteryFile()" )
+	-- app.d.log( "batteryFile" , batteryFile , "flyData.readBatteryFile()" )
 	batFile.readCsv( batteryFile )
+	
+	
+	-- Connect Battery Model -> read settings
+	local cbm = loadScript( app.dir .. "cbm.lua"   , "tbd" )( app )	
+	cbm.load(	app.dir .. "/csvfile.lua" , 
+					app.dir .. "/batfiles/batmodel.csv" )
+
+	flyData.cbmData = cbm.getData()
+
+end
+
+function flyData.isBatModelConnected( batID , modelID )
+	local is = false
+	
+	-- app.d.printAssoc( "isBatModelConnected::flyData.cbmData" , flyData.cbmData )
+	
+	if flyData.cbmData[batID] ~= nil then
+		if flyData.cbmData[batID][modelID]	~= nil then
+			is = true
+		end
+	end
+	
+	return is
 end
 
 function flyData.getBatteryTable()

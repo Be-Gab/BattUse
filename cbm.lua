@@ -40,25 +40,29 @@ function cbm.load( csvLuaFile , csvFile )
 
 	t = cbm.cbmFile.getTable()
 	
+	
 	cbm.data = {}
 	for _ , aT in pairs( t ) do
 		if cbm.data[ aT.batID ] == nil then
 			cbm.data[ aT.batID ]	= {}
 		end
-		table.insert( cbm.data[ aT.batID ] , aT.modelID  )
-		-- cbm.data[ aT.batID ][ aT.modelID ]	= true
+		-- table.insert( cbm.data[ aT.batID ] , aT.modelID  )
+		cbm.data[ aT.batID ][aT.modelID] = true
 	end
 	
+	-- app.d.printAssoc( "cbm.load() : cbm.data " , cbm.data )	
 end
 
 function cbm.save()
 
+	app.d.printAssoc( "elött - cbm.save()::cbm.data" , cbm.data )
+	
 	cbm.cbmFile.clearData()
 	
 	for batID, aModels in pairs( cbm.data ) do
 	
 		if aModels then 			--- != nill
-			for k , modelID in pairs( aModels ) do
+			for modelID, v in pairs( aModels ) do
 
 				cbm.cbmFile.addRow( {	["batID"]	= batID ,
 												["modelID"] = modelID	} )
@@ -67,9 +71,13 @@ function cbm.save()
 		
 	end
 
-	-- app.d.printAssoc( "cbm.save()::GetTable" , cbm.cbmFile.getTable() )
+	app.d.printAssoc( "után - cbm.save()::GetTable" , cbm.cbmFile.getTable() )
 
 	cbm.cbmFile.writeCsv()
+end
+
+function cbm.getData()
+	return cbm.data
 end
 
 function cbm.addConnect( batID , modelID )
@@ -189,16 +197,5 @@ function cbm.test()
 	-- cbm.removeBattery( "Bat99" )
 	-- cbm.save()
 end
--- function cbm.isConnected( batID , modelID )
-	-- local is = false
-	
-	-- if cbm.data[batID] ~= nil then
-		-- if cbm.data[batID][modelID]	= true then
-			-- is = true
-		-- end
-	-- end
-	
-	-- return is
--- end
 
 return cbm

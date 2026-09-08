@@ -258,15 +258,17 @@ local function createButtons(widget, options)
 	local children = {};
 	local batList = flyData.getBatteryTable()
 	local key, row
-	
+
 	-- app.d.printAssoc( "batList" , batList , true )
 	
-	for key , row in ipairs(batList) do
-		if row.retireDate == "" then	
+	for key , row in pairs(batList) do
+	
+		if row.retireDate == "" and
+			flyData.isBatModelConnected( row.id , app.currentModelID )	then	
 
 			todayUsed = dt.isToday( row.lastStartDate )
 			
-			children[#children+1] = buttonCreate( row, todayUsed,widget, options );
+			children[#children+1] = buttonCreate( row, todayUsed, widget, options );
 			
 		end  
 	end
@@ -549,6 +551,8 @@ function widget.selectPage(widget, options)
 	local gombok = createButtons(widget, options)
 	
 	-- app.d.log( "indul",3, "widget.selectPage()" )	
+	
+	flyData.
 
 	ui = widget.pageHead( PAGE_BATSELECT, gombok ,widget, options )
 	
