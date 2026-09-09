@@ -17,6 +17,8 @@ local BATTERY_DISCONNECTED	= 0
 
 QS_LOCK_POSITION_OFF	= 10000
 
+local batFilesModityTime = "---"
+
 local BATTERY_WARN_ONCONNECT_SOUND	= app.dir .. "media/" .. "batsel.wav"
 local BATTERY_WARN_ONFLYMODEL_SOUND	= app.dir .. "media/" .. "batno.wav"
 local FLYMAH_OVERUSE_HAPTIC_SOUND	= app.dir .. "media/" .. "batlow.wav"
@@ -477,11 +479,19 @@ function flyData.selectBattery( recNum )
 end 
 
 function flyData.getLogFile()
-	-- FileName :: FlyLog_YYYYMM_[ModelNeve].csv
-	local dt = getDateTime()
-	local mi = model.getInfo()
+	-- -- FileName :: FlyLog_YYYYMM_[ModelNeve].csv
+	-- local dt = getDateTime()
+	-- local mi = model.getInfo()
 	
-	return flyData.logPath .. string.format( "FlyLog_%04d%02d_%s.csv", dt.year, dt.mon, mi.name )
+	-- return flyData.logPath .. string.format( "FlyLog_%04d%02d_%s.csv", dt.year, dt.mon, mi.name )
+
+	-- FileName :: FlyLog_YYYYMMDD_[ModelNeve]_[ID].csv
+	local dt = getDateTime()
+	
+	return	flyData.logPath .. 
+				string.format( "FlyLog_%04d%02d%02d_%s_%02d.csv", 
+									dt.year, dt.mon, dt.day, app.currentModelName, app.currentModelID )
+
 	
 end
 
@@ -1099,9 +1109,41 @@ function flyData.mAhActionClear()
 	
 end
 
+function flyData.getBatFilesModifyTime()
+
+	function getFileTime( sPathFile )
+		local f, s
+		f =  fstat(sPathFile)
+		if f == nil then
+			return "-"
+		else
+		
+			s = f.time.year .. f.time.mon  .. f.time.day .. f.time.hour .. f.time.min .. f.time.sec
+		
+			return s
+
+		end
+	end
+	-- app.d.log( "app.batFilePath .. app.batFileName" , app.batFilePath .. app.batFileName , "readBatteryFile()" )
+
+	s	=	getFileTime(	app.batFilePath .. app.batFileName ) ..
+								getFileTime( app.cbmFilePath .. app.cbmFileName )
+									
+	-- app.d.log( "batFilesModityTime",s , "flyData.getBatFilesModifyTime()" )
+	return s
+end
+
 function flyData.readBatteryFile()
 
-	app.d.log( "app.batFilePath .. app.batFileName" , app.batFilePath .. app.batFileName , "readBatteryFile()" )
+	-- app.d.log( "app.batFilePath .. app.batFileName" , app.batFilePath .. app.batFileName , "readBatteryFile()" )
+	-- ReRead the battery files, when changed after the last read.
+	
+	fdt = flyData.getBatFilesModifyTime()
+	if fdt == batFilesModityTime then
+		app.d.log( "fdt" ,fdt  , "readBatteryFile()" )
+		app.d.log( "batFilesModityTime" ,batFilesModityTime  , "readBatteryFile()" )
+		return
+	end
 
 	-- Check batFile exists	
 	if fstat( app.batFilePath .. app.batFileName ) == nil then
@@ -1110,17 +1152,35 @@ function flyData.readBatteryFile()
 		io.write( f , "id,maxCapacity,product,cells,maxVolt,earlyCount,count,firstStartDate,retireDate,lastStartDate,capacity" .. "\n"  )
 		io.close( f )
 	end
+	
+	-- app.d.log( "Reread" , fdt , "readBatteryFile()" )
+	
+	--	Mező típus definiciók, üres állomány esetén különösen fontos.
+	-- 	1=Numeric , 2=String
+	batFile.setFieldDataType( 1, 2 )			-- id
+	batFile.setFieldDataType( 2, 1 )			-- maxCapacity
+	batFile.setFieldDataType( 3, 2 )			-- product
+	batFile.setFieldDataType( 4, 1 )			-- cells
+	batFile.setFieldDataType( 5, 1 )			-- maxVolt
+	batFile.setFieldDataType( 6, 1 )			-- earlyCount
+	batFile.setFieldDataType( 7, 1 )			-- count
+	batFile.setFieldDataType( 8, 2 )			-- firstStartDate
+	batFile.setFieldDataType( 9, 2 )			-- retireDate
+	batFile.setFieldDataType(10, 2 )			-- lastStartDate
+	batFile.setFieldDataType(11, 1 )			-- capacity	
 
 	batFile.readCsv( app.batFilePath .. app.batFileName )
-
 	
 	-- Connect Battery Model -> read settings
-	local cbm = loadScript( app.dir .. "cbm.lua"   , "tbd" )( app )	
+	local cbm
+	
+	cbm = loadScript( app.dir .. "cbm.lua"   , "tbd" )( app )	
 	cbm.load(	app.dir .. "/csvfile.lua" , 
 					app.cbmFilePath .. app.cbmFileName )
 
 	flyData.cbmData = cbm.getData()
 
+	batFilesModityTime = fdt
 end
 
 function flyData.isBatModelConnected( batID , modelID )

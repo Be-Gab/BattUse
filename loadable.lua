@@ -986,17 +986,22 @@ function widget.logViewPage(widget, options)
 	
 	local logFile = flyData.getLogFile()
 	local logLineId = 0
+	local	logList 
 	local detailsVisible = false
 	
-	logLines.readCsv( logFile )
-	
+	if fstat( logFile ) == nil then		-- file not exists
+		logList	= {}
+	else
+		logLines.readCsv( logFile )
+		logList = logLines.getTable()	
+	end
+
 	--	Process backwards the last lines, max line count : LOG_MAX_ROW_COUNT
 	local logButtons = {};
 	local key, row
-	local logList = logLines.getTable()
+
 	
 	-- app.d.printAssoc( "logViewPage() logList" ,  logList )
-
 	-- app.d.log( "math.min( #logList , LOG_MAX_ROW_COUNT )" , math.min( #logList , LOG_MAX_ROW_COUNT ) , "logViewPage()" )
 
 	for r = #logList , #logList - math.min( #logList , LOG_MAX_ROW_COUNT ) +1, -1 do
@@ -1283,14 +1288,24 @@ function widget.logViewPage(widget, options)
 											flexFlow	= lvgl.FLOW_COLUMN, 
 											flexPad	= lvgl.PAD_SMALL ,
 											scrollBar= true, scrollDir = lvgl.SCROLL_VER,
-											-- visible	=	(
-																-- function()
-																	-- return not detailsVisible;
-																-- end
-															-- ) ,											
+											visible	=	function()
+																return ( #logButtons > 0 );
+															end,											
 											children =  logButtons
-										}
-										,
+										},
+										{	type		= "box" ,flexFlow	= lvgl.FLOW_COLUMN,flexPad	= lvgl.PAD_SMALL ,
+											scrollBar= true, scrollDir = lvgl.SCROLL_VER,
+											h			= widget.zone.h - PAGE_HEAD_HEIGH -5,
+											w			= widget.zone.w,
+											visible	=	function()
+																return ( #logButtons == 0 );
+															end,											
+											children =  {
+												{	type	=	"label",
+													text	=	"Today no flight, yet."
+												}
+											}
+										},
 										{	type		= "box" ,
 											h			= widget.zone.h - PAGE_HEAD_HEIGH -5 ,
 											scrollBar = false,

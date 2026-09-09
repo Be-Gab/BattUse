@@ -66,7 +66,6 @@ function settings.getBattFiles()
 end
 
 function settings.setFileName( fn )
-	app.d.log( "fn" , fn , "settings.setFileName()" )
 	filename = fn
 end
 
@@ -371,7 +370,7 @@ end
 settings.setFileName( filename )
 settings.settingsLoad()
 
-app.d.printAssoc( "settings" , settings )
+-- app.d.printAssoc( "settings" , settings )
 
 
 return settings

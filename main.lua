@@ -16,6 +16,10 @@ local app = {}
 
 app.name  = "BattUse"
 app.version = "v1.0.0 RC1"
+
+app.currentModelName	= ""
+app.currentModelID	= 0
+
 app.dir = "/WIDGETS/BattUse/"
 app.modelConfigPath	= app.dir .. "models/"
 
@@ -57,8 +61,9 @@ local function create(zone, options )
 	local errMsg
 
 	app.currentModelID = tonumber( string.match( modelConfigFile , "(%d+)") )
-
-	print( ":BattUse: Create() Widget Start. Model:" .. mi.name .. ", id:" .. app.currentModelID )
+	app.currentModelName	= mi.name
+	
+	print( ":BattUse: Create() Widget Start. Model:" .. app.currentModelName .. ", id:" .. app.currentModelID )
 	
 	if (lvgl == nil) then
 		return {zone = zone, options = options, name = app.name }
