@@ -55,7 +55,7 @@ end
 
 function cbm.save()
 
-	app.d.printAssoc( "elött - cbm.save()::cbm.data" , cbm.data )
+	-- app.d.printAssoc( "elött - cbm.save()::cbm.data" , cbm.data )
 	
 	cbm.cbmFile.clearData()
 	
@@ -71,7 +71,7 @@ function cbm.save()
 		
 	end
 
-	app.d.printAssoc( "után - cbm.save()::GetTable" , cbm.cbmFile.getTable() )
+	-- app.d.printAssoc( "után - cbm.save()::GetTable" , cbm.cbmFile.getTable() )
 
 	cbm.cbmFile.writeCsv()
 end
