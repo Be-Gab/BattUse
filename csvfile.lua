@@ -2,8 +2,7 @@
 ##  csvfile.lua - Read/Write/Update csv format file                      ##
 ##                                                                       ##
 ## Author:  BeGab                                                        ##
-## Date:    2024-07-20                                                   ##
-## Version: 0.6.0                                                        ##
+##                                                                       ##
 ## URL : https://github.com/Be-Gab/BattUse                               ##
 ##                                                                       ##
 ##                      Copyright (C) "BeGab"                            ##
