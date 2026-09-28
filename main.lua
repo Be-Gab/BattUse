@@ -18,7 +18,6 @@ app.name  = "BattUse"
 app.version = "v1.0.0 RC1"
 
 app.currentModelName	= ""
-app.currentModelID	= 0
 
 app.dir = "/WIDGETS/BattUse/"
 app.modelConfigPath	= app.dir .. "models/"
@@ -57,13 +56,12 @@ local options =	{
 
 local function create(zone, options )
 	local mi = model.getInfo()
-	local modelConfigFile = app.modelConfigPath .. string.sub( mi.filename , 1, -5 ) .. ".cfg"
+	local modelConfigFile = app.modelConfigPath .. mi.name .. ".cfg"
 	local errMsg
 
-	app.currentModelID = tonumber( string.match( modelConfigFile , "(%d+)") )
 	app.currentModelName	= mi.name
 	
-	print( ":BattUse: Create() Widget Start. Model:" .. app.currentModelName .. ", id:" .. app.currentModelID )
+	print( ":BattUse: Create() Widget Start. Model:" .. app.currentModelName )
 	
 	if (lvgl == nil) then
 		return {zone = zone, options = options, name = app.name }

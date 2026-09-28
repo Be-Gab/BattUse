@@ -15,15 +15,15 @@ local cbm = {}
 
 
 -- csv file :
---						batId, modelID 
---						batId, modelID 
---						batId, modelID 
+--						batId, modelName 
+--						batId, modelName 
+--						batId, modelName 
 
 -- cbm.data :
---						batId, { modelID, modelID , modelID } 
---						batId, { modelID, modelID , modelID } 
+--						batId, { modelName, modelName , modelName } 
+--						batId, { modelName, modelName , modelName } 
 
-cbm.data		= {}			-- [batID][modelID] = true
+cbm.data		= {}			-- [batID][modelName] = true
 cbm.csvLuaFile	= ""			-- fullname of csvfile.lua
 cbm.csvFile		= ""			-- cbm data file : fullname of cbm.csv 
 cbm.cbmFile		= ""			-- object :: cbm.csvLuaFile
@@ -34,11 +34,13 @@ function cbm.load( csvLuaFile , csvFile )
 	
 	cbm.cbmFile  =	loadScript( cbm.csvLuaFile )()	
 	cbm.cbmFile.setFieldDataType(  1 , 2 )	-- First  field String = 2
-	cbm.cbmFile.setFieldDataType(  2 , 1 )	-- Second field Numeric = 1
+	cbm.cbmFile.setFieldDataType(  2 , 2 )	-- Second field String = 2
 
 	cbm.cbmFile.readCsv( cbm.csvFile )	
 
 	t = cbm.cbmFile.getTable()
+	
+	-- app.d.printAssoc( "cbm.load() : t " , t )
 	
 	
 	cbm.data = {}
@@ -46,8 +48,8 @@ function cbm.load( csvLuaFile , csvFile )
 		if cbm.data[ aT.batID ] == nil then
 			cbm.data[ aT.batID ]	= {}
 		end
-		-- table.insert( cbm.data[ aT.batID ] , aT.modelID  )
-		cbm.data[ aT.batID ][aT.modelID] = true
+		-- table.insert( cbm.data[ aT.batID ] , aT.modelName  )
+		cbm.data[ aT.batID ][aT.modelName] = true
 	end
 	
 	-- app.d.printAssoc( "cbm.load() : cbm.data " , cbm.data )	
@@ -62,10 +64,10 @@ function cbm.save()
 	for batID, aModels in pairs( cbm.data ) do
 	
 		if aModels then 			--- != nill
-			for modelID, v in pairs( aModels ) do
+			for modelName, v in pairs( aModels ) do
 
 				cbm.cbmFile.addRow( {	["batID"]	= batID ,
-												["modelID"] = modelID	} )
+												["modelName"] = modelName	} )
 			end
 		end
 		
@@ -80,24 +82,24 @@ function cbm.getData()
 	return cbm.data
 end
 
-function cbm.addConnect( batID , modelID )
+function cbm.addConnect( batID , modelName )
 	if cbm.data[batID] == nil then
 		cbm.data[batID]	= {}
 	end
-	cbm.data[batID][modelID]	= true
+	cbm.data[batID][modelName]	= true
 end
 
-function cbm.delConnect( batID , modelID )
+function cbm.delConnect( batID , modelName )
 	if cbm.data[batID] ~= nil then
-		cbm.data[batID][modelID]	= false
+		cbm.data[batID][modelName]	= false
 	end
 end
 
-function cbm.removeModel( modelID )
+function cbm.removeModel( modelName )
 
 	for bID, aModels in pairs( cbm.data ) do
 		for mID, v in pairs( aModels ) do
-			if v and mID == modelID then
+			if v and mID == modelName then
 				cbm.data[bID][mID]	= nil
 			end
 		end
@@ -128,13 +130,13 @@ function cbm.getBatteryModels( batID  )
 	end
 end
 
-function cbm.getModelBatteries( modelID )
+function cbm.getModelBatteries( modelName )
 	local batIDs	= {}
 
 	for bID, aModels in pairs( cbm.data ) do
 	
 		for mID, v in pairs( aModels ) do
-			if v and mID == modelID then
+			if v and mID == modelName then
 				table.insert( batIDs , bID )
 			end
 		end

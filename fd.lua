@@ -489,8 +489,8 @@ function flyData.getLogFile()
 	local dt = getDateTime()
 	
 	return	flyData.logPath .. 
-				string.format( "FlyLog_%04d%02d%02d_%s_%02d.csv", 
-									dt.year, dt.mon, dt.day, app.currentModelName, app.currentModelID )
+				string.format( "FlyLog_%04d%02d%02d_%s.csv", 
+									dt.year, dt.mon, dt.day, app.currentModelName )
 
 	
 end
@@ -1183,13 +1183,13 @@ function flyData.readBatteryFile()
 	batFilesModityTime = fdt
 end
 
-function flyData.isBatModelConnected( batID , modelID )
+function flyData.isBatModelConnected( batID , modelName )
 	local is = false
 	
 	-- app.d.printAssoc( "isBatModelConnected::flyData.cbmData" , flyData.cbmData )
 	
 	if flyData.cbmData[batID] ~= nil then
-		if flyData.cbmData[batID][modelID]	~= nil then
+		if flyData.cbmData[batID][modelName]	~= nil then
 			is = true
 		end
 	end

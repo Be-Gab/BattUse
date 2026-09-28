@@ -264,7 +264,7 @@ local function createButtons(widget, options)
 	for key , row in pairs(batList) do
 	
 		if row.retireDate == "" and
-			flyData.isBatModelConnected( row.id , app.currentModelID )	then	
+			flyData.isBatModelConnected( row.id , app.currentModelName )	then	
 
 			todayUsed = dt.isToday( row.lastStartDate )
 			
@@ -275,7 +275,6 @@ local function createButtons(widget, options)
 
 	return children;
 end 
-
 
 --#### widget. #########################################################
 
