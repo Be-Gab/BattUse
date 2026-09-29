@@ -42,7 +42,6 @@ function cbm.load( csvLuaFile , csvFile )
 	
 	-- app.d.printAssoc( "cbm.load() : t " , t )
 	
-	
 	cbm.data = {}
 	for _ , aT in pairs( t ) do
 		if cbm.data[ aT.batID ] == nil then
