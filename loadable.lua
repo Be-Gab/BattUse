@@ -1004,18 +1004,24 @@ function widget.logViewPage(widget, options)
 	-- app.d.log( "math.min( #logList , LOG_MAX_ROW_COUNT )" , math.min( #logList , LOG_MAX_ROW_COUNT ) , "logViewPage()" )
 
 	for r = #logList , #logList - math.min( #logList , LOG_MAX_ROW_COUNT ) +1, -1 do
+		local hr, mn, te
+		
+		hr	= tonumber( string.sub( logList[r].startFly, 9,10 ) )
+		mn	= tonumber( string.sub( logList[r].startFly,11,12 ) )
+		te	= string.format( "%02d:%02d" ,  hr, mn	 )
+
+		-- sc	= tonumber( string.sub( logList[r].startFly,13,14 ) )		
+		-- te	= string.format( "%02d:%02d:%02d" ,  hr, mn, sc	 )
 
 		logButtons[#logButtons+1] = 
 			{
 				type	= "button",
 				w		= BTN_WIDTH , 
 				h		= BTN_HEIGHT, 
-				press	=	(	
-								function() 
-									logLineId = r;
-									detailsVisible = true;
-								end
-							) ,
+				press	=	function() 
+								logLineId = r;
+								detailsVisible = true;
+							end ,
 				children	=	{
 									{
 										type	= "box" , -- full Button
@@ -1030,8 +1036,8 @@ function widget.logViewPage(widget, options)
 										-- clickable= false	,
 										children	=	{
 															{	type	= "label", 
-																w		= 160 * lvgl.LCD_SCALE,
-																text	= dt.getDateTime( logList[r].startFly ) 
+																w		= 100 * lvgl.LCD_SCALE,
+																text	= te		-- time from the startFly 
 															} ,
 															{	type	= "label", 
 																w		= 90 * lvgl.LCD_SCALE,
@@ -1045,6 +1051,11 @@ function widget.logViewPage(widget, options)
 																w		= 80 * lvgl.LCD_SCALE,
 																align	= RIGHT,
 																text	= logList[r].mAmpFly .. " mA"
+															} ,
+															{	type	= "label", 
+																w		= 80 * lvgl.LCD_SCALE,
+																align	= RIGHT,
+																text	= logList[r].maxAmp .. " A"
 															} 
 										}
 											
