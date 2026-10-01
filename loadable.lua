@@ -255,7 +255,7 @@ local function buttonCreate( bat, todayUsed, widget, options )
 end
 
 local function createButtons(widget, options)
-	local children = {};
+	local children = {}
 	local batList = flyData.getBatteryTable()
 	local key, row
 	
