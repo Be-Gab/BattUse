@@ -32,6 +32,13 @@ function cbm.load( csvLuaFile , csvFile )
 	cbm.csvLuaFile	=	csvLuaFile
 	cbm.csvFile	=	csvFile
 	
+	-- batmodel file not exists, create an empty one
+	if fstat( cbm.csvFile ) == nil then	
+		f=io.open( cbm.csvFile ,"a")
+		io.write( f , "batID,modelName" .. "\n"  )
+		io.close( f )
+	end
+	
 	cbm.cbmFile  =	loadScript( cbm.csvLuaFile )()	
 	cbm.cbmFile.setFieldDataType(  1 , 2 )	-- First  field String = 2
 	cbm.cbmFile.setFieldDataType(  2 , 2 )	-- Second field String = 2

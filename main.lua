@@ -61,7 +61,7 @@ local function create(zone, options )
 
 	app.currentModelName	= mi.name
 	
-	print( ":BattUse: Create() Widget Start. Model:" .. app.currentModelName )
+	-- print( ":BattUse: Create() Widget Start. Model:" .. app.currentModelName )
 	
 	if (lvgl == nil) then
 		return {zone = zone, options = options, name = app.name }

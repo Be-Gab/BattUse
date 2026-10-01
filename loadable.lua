@@ -258,8 +258,6 @@ local function createButtons(widget, options)
 	local children = {};
 	local batList = flyData.getBatteryTable()
 	local key, row
-
-	-- app.d.printAssoc( "batList" , batList , true )
 	
 	for key , row in pairs(batList) do
 	
@@ -271,6 +269,16 @@ local function createButtons(widget, options)
 			children[#children+1] = buttonCreate( row, todayUsed, widget, options );
 			
 		end  
+	end
+
+	-- Battery list empty...
+	if #children == 0 then
+		-- app.d.printAssoc( "batList Üres Vissza" , batList , true )
+		return	{{	type	= "label" ,
+						align	= CENTER,
+						text	= "No battery is assigned to this model!"
+						
+					}}
 	end
 
 	return children;

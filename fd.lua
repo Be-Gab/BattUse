@@ -17,7 +17,7 @@ local BATTERY_DISCONNECTED	= 0
 
 QS_LOCK_POSITION_OFF	= 10000
 
-local batFilesModityTime = "---"
+local batFilesModifyTime = "---"
 
 local BATTERY_WARN_ONCONNECT_SOUND	= app.dir .. "media/" .. "batsel.wav"
 local BATTERY_WARN_ONFLYMODEL_SOUND	= app.dir .. "media/" .. "batno.wav"
@@ -1129,7 +1129,7 @@ function flyData.getBatFilesModifyTime()
 	s	=	getFileTime(	app.batFilePath .. app.batFileName ) ..
 								getFileTime( app.cbmFilePath .. app.cbmFileName )
 									
-	-- app.d.log( "batFilesModityTime",s , "flyData.getBatFilesModifyTime()" )
+	-- app.d.log( "batFilesModifyTime",s , "flyData.getBatFilesModifyTime()" )
 	return s
 end
 
@@ -1139,14 +1139,15 @@ function flyData.readBatteryFile()
 	-- ReRead the battery files, when changed after the last read.
 	
 	fdt = flyData.getBatFilesModifyTime()
-	if fdt == batFilesModityTime then
-		app.d.log( "fdt" ,fdt  , "readBatteryFile()" )
-		app.d.log( "batFilesModityTime" ,batFilesModityTime  , "readBatteryFile()" )
+	if fdt == batFilesModifyTime then
+		-- app.d.log( "fdt" ,fdt  , "readBatteryFile()" )
+		-- app.d.log( "batFilesModifyTime" ,batFilesModifyTime  , "readBatteryFile()" )
 		return
 	end
 
-	-- Check batFile exists	
+	-- Check batFile exists	:: If not, create an empty
 	if fstat( app.batFilePath .. app.batFileName ) == nil then
+	
 		f=io.open( app.batFilePath .. app.batFileName ,"a")
 		
 		io.write( f , "id,maxCapacity,product,cells,maxVolt,earlyCount,count,firstStartDate,retireDate,lastStartDate,capacity" .. "\n"  )
@@ -1180,7 +1181,7 @@ function flyData.readBatteryFile()
 
 	flyData.cbmData = cbm.getData()
 
-	batFilesModityTime = fdt
+	batFilesModifyTime = fdt
 end
 
 function flyData.isBatModelConnected( batID , modelName )
