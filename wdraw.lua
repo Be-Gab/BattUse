@@ -893,16 +893,31 @@ function dispBatteryPercent( widget )
 end
 
 function dispQuickSelect( widget )
-	local batList = flyData.getBatteryTable()
+	local batListAll = flyData.getBatteryTable()
+	local batList = {}
 	local batBox = {}
+	local previousQS_ChannelValue = -1
+	
+	-- app.d.printAssoc( "dispQuickSelect() -> batListAll" , batListAll )
+	
+	-- Filter: Live and assigned batteries
+	for key , row in pairs(batListAll) do
+	
+		if row.retireDate == "" and
+			flyData.isBatModelConnected( row.id , app.currentModelName )	then	
+
+			-- batList[ key ] = row
+			batList[ #batList+1 ] = row
+			
+		end  
+	end
+	
+	-- app.d.printAssoc( "dispQuickSelect() -> batList" , batList )
+
 	local boxW = ( widget.zone.w / #batList ) -2 - ( #batList * 1 )
 	local boxH = widget.zone.h - ( 40 * lvgl.LCD_SCALE )
 	local chRange = ( 2048 / #batList ) + 1
-	local previousQS_ChannelValue = -1
-	
-	-- app.d.printAssoc( "dispQuickSelect() -> batList" , batList )
-	
-	
+		
 	-- for i = 1, #flyData.batteryRec do
 	for i = 1, #batList do
 	
@@ -932,6 +947,7 @@ function dispQuickSelect( widget )
 		
 	end
 
+	-- app.d.printAssoc( "dispQuickSelect() -> batBox" , batBox )
 
    widget.ui = lvgl.build({
 			{	type		= "box", 
@@ -970,10 +986,12 @@ function dispQuickSelect( widget )
 									text	=	function(s)
 													local qsValue = 1024 + getValue( flyData.quickSelChannel );
 													
+													-- app.d.log( "qsValue" , qsValue , "dispQuickSelect()" )
+													
 													if ( 0 < flyData.quickSelChannel ) and
 														previousQS_ChannelValue ~= qsValue then;
 														
-														previousQS_ChannelValue = qsValue
+														previousQS_ChannelValue = qsValue;
 														
 														if not flyData.flightStartTime and 
 															not flyData.isQuickSelectLocked() then;
@@ -982,6 +1000,10 @@ function dispQuickSelect( widget )
 	
 															local b = math.floor( qsValue / chRange ) + 1;
 															local d = batList[ b ].id;
+
+															-- app.d.log( "b" , b , "dispQuickSelect()" );
+															-- app.d.log( "d" , d , "dispQuickSelect()" );
+
 															
 															if d ~= flyData.batteryRec.id then;
 																flyData.selectBatteryByID( batList[ b ].id );
