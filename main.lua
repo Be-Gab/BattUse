@@ -12,6 +12,8 @@
 ###########################################################################
 ## License GNU General Public License v3.0                               ##
 #########################################################################]]
+-- Debug Window filter : /(.:BattUse.|.:BattUse.^f_stat|filerw|error^f_stat|warning|^f_stat|-(E|W)-)/i
+
 local app = {}
 
 app.name  = "BattUse"
@@ -34,8 +36,6 @@ local flyData	= {}
 local loadedModel = ""
 
 local batFile	= {}
-
--- Debug Window filter : /(.:BattUse.|.:BattUse.^f_stat|filerw|error^f_stat|warning|^f_stat|-(E|W)-)/i
 
 local options =	{	
 							{ "Display"	, CHOICE	,	1, {	

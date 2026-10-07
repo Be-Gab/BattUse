@@ -310,17 +310,22 @@ function flyData.Save( wgt )
 	
 	-- id,capacity,product,cells,earlyCount,count,firstStartDate,retireDate,lastStartDate
 	
+	-- app.d.printAssoc( "flyData.Save() , flyData :" , flyData )
+	
 	---------------------------------------------
 	flyData.saved.batVoltStart	= flyData.batVoltStart
 	flyData.saved.batVoltEnd	= flyData.batVoltEnd
-	flyData.saved.batCell		= flyData.getCells() -- flyData.modelCells
+	flyData.saved.batCapacity	= flyData.batteryRec.capacity
+	flyData.saved.batMaxCapacity	= flyData.batteryRec.maxCapacity
+	
+	flyData.saved.batCell			= flyData.getCells() -- flyData.modelCells
 
 	-- d.printAssoc( "flyData" , flyData, false )
 	
 	-- Battery NOT Selected
 	if flyData.selectedBatteryRecNum == 0 then
 	
-		flyData.saved.batPercentEnd	= flyData.getPercent( flyData.batVoltEnd / flyData.modelCells )
+		flyData.saved.batPercentEnd	= flyData.getPercent( flyData.batCapacity / flyData.modelCells )
 		flyData.saved.batPercentStart	= flyData.batPercentEnd	-- flyData.getPercent( flyData.batVoltStart / flyData.modelCells )
 
 		flyData.saved.selBatteryName = "-"
@@ -331,7 +336,7 @@ function flyData.Save( wgt )
 		
 		-- batPercentStart
 
-		flyData.saved.batCapcity = 0
+		flyData.saved.batCapacity = 0
 		flyData.saved.batMaxVolt = "-"
 		flyData.saved.batLastFlight = ""
 		flyData.saved.batLastFlightFormated = ""
@@ -375,7 +380,7 @@ function flyData.Save( wgt )
 		flyData.saved.batteryID			= flyData.batteryRec.id
 		flyData.saved.batteryProduct	= flyData.batteryRec.product
 	
-		flyData.saved.batCapcity		= flyData.batteryRec.capacity
+		flyData.saved.batCapacity		= flyData.batteryRec.capacity
 		
 		flyData.saved.batLastFlight	= flyData.batteryRec.lastStartDate
 

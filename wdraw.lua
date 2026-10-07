@@ -74,6 +74,10 @@ end
 
 function dispProdCapa( widget )
 	local WZW = math.floor( widget.zone.w  / 2) * 2		-- Párosszámra lefelé kerekítve.
+	
+	-- app.d.log( "WZW" , WZW , "dispProdCapa()" )	
+	-- app.d.printAssoc( "dispProdCapa() ::  flyData.batteryRec" , flyData.batteryRec )
+	
 	local f = 0
 	
 	if widget.zone.h / 2 < ( 22 * lvgl.LCD_SCALE ) then
@@ -114,11 +118,12 @@ function dispProdCapa( widget )
 								w		= ( WZW -2 ) / 2 , 
 								text	=	function(s)        
 												if flyData.saved.isSaved then;
-													s = flyData.saved.batCell or "-";
-												else
-													s = flyData.batteryRec.cells or "-";
-												end;												
-												return s .. "S" ;
+													s = flyData.saved.batMaxVolt or "";
+												else;
+													s = flyData.batteryRec.maxVolt or "";
+												end;
+												
+												return s .. "V/cell" ;
 											end	
 							}
 						}
@@ -127,17 +132,27 @@ function dispProdCapa( widget )
 					{	type = "box", 
 						flexFlow = lvgl.FLOW_ROW , 
 						flexPad	= 0,
-						w			= WZW - 2, 
+						w			= WZW , 
 						children = {
 							{	type	= "label", 
-								w		= ( WZW -2 ) / 2 , 
+								w		= WZW * .7 , 
 								font	= f,
 								align = LEFT, 
 								text	=	function(s)        
 												if flyData.saved.isSaved then;
-													s = flyData.saved.batCapcity or "-";
+													-- s = ( flyData.saved.batCapacity or "-";
+													if flyData.saved.batCapacity then;
+														s = flyData.saved.batMaxCapacity .. " / " .. flyData.saved.batCapacity;
+													else;
+														s = "-";
+													end;
 												else;
-													s = flyData.batteryRec.capacity or "-";
+													-- s = flyData.batteryRec.capacity or "-";
+													if flyData.batteryRec.capacity then;
+														s = flyData.batteryRec.maxCapacity .. " / " .. flyData.batteryRec.capacity;
+													else;
+														s = "-";
+													end;
 												end;
 
 												return s .. " mAh" ;
@@ -145,17 +160,16 @@ function dispProdCapa( widget )
 							} 
 							,
 							{	type	= "label", 
-								w		= ( WZW -2 ) / 2 , 
+								w		= WZW * .3 , 
 								font	= f,
 								align = RIGHT, 
 								text	=	function(s)        
 												if flyData.saved.isSaved then;
-													s = flyData.saved.batMaxVolt or "";
-												else;
-													s = flyData.batteryRec.maxVolt or "";
-												end;
-												
-												return s .. "V/cell" ;
+													s = flyData.saved.batCell or "-";
+												else
+													s = flyData.batteryRec.cells or "-";
+												end;												
+												return s .. "S" ;
 											end	
 							}
 						}
@@ -769,7 +783,7 @@ function dispBatteryPercent( widget )
 												local s = "";
 												
 												if flyData.saved.isSaved then;
-													s = s .. flyData.saved.batVoltEnd;
+													s = s .. flyData.saved.batCapacity;
 													if flyData.saved.isHV then;
 														s = s .. ", HV";
 													end;
