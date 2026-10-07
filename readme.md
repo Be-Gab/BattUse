@@ -1,13 +1,15 @@
 # BattUse Widget
 
-Widget version: 2026.10.01. 1.0 RC0 - Test version
+In its current state, in the absence of a sufficient number of tests, live use of the widget is not recommended.
 
-In its current state, due to insufficient testing, the use of the widget in live operation is not recommended. At the same time, I am not aware of any situation where a Widget error would affect flight safety. I have been using it for months without any problems.
-
-Minimum required EdgeTx version: 2.11.5, the latest is recommended.
-The Widget uses LVGL graphical display.
-Developed and tested on a Radiomaster TX16S radio.
+**Minimum required EdgeTx version:** 2.11.5 (recommended: 2.12.0 )  
+This widget uses LVGL for its graphical interface.  
+Tested during development on a Radiomaster TX16S radio.
 
 Please read the [Wiki page](https://github.com/Be-Gab/BattUse/wiki) !
 
-## 
+## Installation
+
+Install the widget the same way as any other EdgeTx widget:  
+Extract the contents of the downloaded `.zip` file into the `/WIDGETS/BattUse` folder on your radio.
+There are a few more steps to take, read the [Wiki page](https://github.com/Be-Gab/BattUse/wiki) !
