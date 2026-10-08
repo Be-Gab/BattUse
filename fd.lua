@@ -325,7 +325,7 @@ function flyData.Save( wgt )
 	-- Battery NOT Selected
 	if flyData.selectedBatteryRecNum == 0 then
 	
-		flyData.saved.batPercentEnd	= flyData.getPercent( flyData.batCapacity / flyData.modelCells )
+		flyData.saved.batPercentEnd	= flyData.getPercent( flyData.batVoltEnd / flyData.modelCells )
 		flyData.saved.batPercentStart	= flyData.batPercentEnd	-- flyData.getPercent( flyData.batVoltStart / flyData.modelCells )
 
 		flyData.saved.selBatteryName = "-"
@@ -957,24 +957,10 @@ function flyData.batVoltReadSensor()
 
 		local batVolt, isCurrent, isFresh = getSourceValue( flyData.voltReadSensor )
 		
-		if not isCurrent then 
-			batVolt = 0
-		end 
-	 
-		-- Start :: Teszthez  ====================================================================
-		-- TODO : Csak a teszthez az érték módosítása
-		-- Input -1024 - 1024, Inkább : 0 - 1014 :: 3,7 Volt - 4.2 Volt / Cell = 44.4 - 50,4 
-		-- 3.4 = 5% =>       40,8 - 50,4
-		
-		-- if batVolt < 1 then
+		-- if not isCurrent then 
 			-- batVolt = 0
-		-- else
-			-- batVolt = 40.8 + ( batVolt * 0.009375 )   -- [40.8 - 50.4]
-		-- end
-		
-		-- d.log(  "batVolt" , batVolt, "flyData.batVoltReadSensor()" )
-		-- End :: Teszthez  ======================================================================
-
+		-- end 
+	 
 	
 		return batVolt	
 		

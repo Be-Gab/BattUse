@@ -651,7 +651,7 @@ function dispMaxAmp( widget )
 
 end
 
-function dispBatteryPercent( widget )
+function dispBatteryPercent( widget )			-- Battery Status
 	local state
 	local st = {}
 	st.NODATA			= 0
@@ -783,7 +783,7 @@ function dispBatteryPercent( widget )
 												local s = "";
 												
 												if flyData.saved.isSaved then;
-													s = s .. flyData.saved.batCapacity;
+													s = s .. flyData.saved.batVoltEnd .. " V ";  -- batCapacity ???;
 													if flyData.saved.isHV then;
 														s = s .. ", HV";
 													end;
