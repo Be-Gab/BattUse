@@ -13,3 +13,9 @@ Please read the [Wiki page](https://github.com/Be-Gab/BattUse/wiki) !
 Install the widget the same way as any other EdgeTx widget:  
 Extract the contents of the downloaded `.zip` file into the `/WIDGETS/BattUse` folder on your radio.
 There are a few more steps to take, read the [Wiki page](https://github.com/Be-Gab/BattUse/wiki) !
+
+
+
+
+
+*AI free project*
