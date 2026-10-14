@@ -381,7 +381,6 @@ function fileRW.txtTableData()
 
 			-- fileRW.log( "fileRW.txtTableData, Fields k:" .. k .. " row : " .. v )
 
-
 			if v == nil or row[ v ] == nil then	-- Field exists but do not have value
 				rowVal = ""
 			else					
