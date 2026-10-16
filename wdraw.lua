@@ -271,7 +271,7 @@ function dispStartCount( widget )
 												s = flyData.saved.batFlightCount;
 											else;
 												if flyData.batteryRec.id ~= nil then;
-													s = flyData.batteryRec.count;
+													s = flyData.batteryRec.count + flyData.batteryRec.earlyCount;
 												else;
 													s = "-";
 												end;
