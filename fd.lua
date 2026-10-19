@@ -313,7 +313,7 @@ function flyData.Save( wgt )
 	-- app.d.printAssoc( "flyData.Save() , flyData :" , flyData )
 	
 	---------------------------------------------
-	flyData.saved.batVoltStart	= flyData.batVoltStart
+	flyData.saved.batVoltStart	= flyData.batVoltStart or 0
 	flyData.saved.batVoltEnd	= flyData.batVoltEnd
 	flyData.saved.batCapacity	= flyData.batteryRec.capacity
 	flyData.saved.batMaxCapacity	= flyData.batteryRec.maxCapacity
