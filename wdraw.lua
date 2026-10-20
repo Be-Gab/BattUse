@@ -268,7 +268,7 @@ function dispStartCount( widget )
 							text	=	function()
 											local s ="";
 											if flyData.saved.isSaved then;
-												s = flyData.saved.batFlightCount;
+												s = flyData.saved.batAllFlightCount;		--batFlightCount;
 											else;
 												if flyData.batteryRec.id ~= nil then;
 													s = flyData.batteryRec.count + flyData.batteryRec.earlyCount;
