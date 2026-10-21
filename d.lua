@@ -59,8 +59,7 @@ end
 
 function d.printAssoc( msg , tbl, showFunctions, tab )
 	local sTab
-	
-	
+
 	showFunctions = showFunctions or false
 	tab = tab or 0
 	
@@ -68,25 +67,33 @@ function d.printAssoc( msg , tbl, showFunctions, tab )
 
 	d.log(  sTab .. "==================== >> " , msg )
 	
-	for key, value in pairs( tbl) do
+	if type( tbl ) ~= "table" then
+	
+		d.log(  sTab .. "   Not a table: "  , type( tbl ) )
+	
+	else
+	
+		for key, value in pairs( tbl) do
 
-		if type( value ) == "table" then
-			d.printAssoc( key , value, showFunctions, tab + 1 )
-		 
-		else
-			-- d.log( "Teszt:"..msg..":" , key )
-
-			if type( value ) == "function" then
-				if showFunctions then
-					d.log(  sTab .. "   " .. key .. "()" )
-				end
+			if type( value ) == "table" then
+				d.printAssoc( key , value, showFunctions, tab + 1 )
+			 
 			else
-				d.log(  sTab .. "   " .. key , value )
-			end 
+				-- d.log( "Teszt:"..msg..":" , key )
 
-			
+				if type( value ) == "function" then
+					if showFunctions then
+						d.log(  sTab .. "   " .. key .. "()" )
+					end
+				else
+					d.log(  sTab .. "   " .. key , value )
+				end 
+
+				
+			end
 		end
-	end	
+
+	end
 
 	d.log( sTab .. "==================== << "  , msg )
 
