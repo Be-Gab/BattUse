@@ -140,14 +140,12 @@ function dispProdCapa( widget )
 								align = LEFT, 
 								text	=	function(s)        
 												if flyData.saved.isSaved then;
-													-- s = ( flyData.saved.batCapacity or "-";
-													if flyData.saved.batCapacity then;
+													if flyData.saved.batCapacity and  flyData.saved.batMaxCapacity then;
 														s = flyData.saved.batMaxCapacity .. " / " .. flyData.saved.batCapacity;
 													else;
 														s = "-";
 													end;
 												else;
-													-- s = flyData.batteryRec.capacity or "-";
 													if flyData.batteryRec.capacity then;
 														s = flyData.batteryRec.maxCapacity .. " / " .. flyData.batteryRec.capacity;
 													else;
