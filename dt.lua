@@ -145,6 +145,7 @@ function dt.getString()
 end
 	
 function dt.setByString( s )
+	-- print( "s:" .. s .. " -> dt.setByString()" )
 
 	if s == "" or string.sub( s,1,4 ) == "    " then
 		-- d.log( "A eset, year:" , string.sub( s,1,4 ) , "dt.setByString()" )

@@ -15,11 +15,8 @@ local settings = {}
 
 local PERCENTS_SEP_CHAR	= "|"
 local PERCENTS_COUNT		= 6
-local BATTFILES_DIR		= app.dir .. "batfiles"
-local DEMO_BATT_FILENAME= "demo_batfile.csv"
-local TARGET_PERCENT_SLIDER_STEP = 5 
 
-local battFiles = DEMO_BATT_FILENAME
+local TARGET_PERCENT_SLIDER_STEP = 5 
 
 local function split(str, separator)
     local result = {}
@@ -64,59 +61,6 @@ local function perenctString2Table( strPercents )
 	return result
 end
 
-local function createDemoBatFile()
-
-	-- create file with head
-	f=io.open( BATTFILES_DIR .. "/" .. DEMO_BATT_FILENAME ,"a")
-	io.write( f , "id,capacity,product,cells,maxVolt,earlyCount,count,firstStartDate,retireDate,lastStartDate" .. "\n"  )
-	io.write( f , "\"Bat1\",5000,\"Prod\",12,4.2,20,150,\"2019-09-09\",\"\",\"2025.02.24. 16:33:26\"" .. "\n"  )
-	io.write( f , "\"Bat2\",5000,\"Prod B\",12,4.35,20,27,\"2019-09-09\",\"\",\"2025.04.23. 16:19:22\"" .. "\n"  )
-	io.write( f , "\"Bat3\",5000,\"Prod CC\",12,4.2,200, 1,\"2019-09-09\",\"2023-09-09\",\"2023.09.01. 11:11:22\"" .. "\n"  )	
-	
-	io.close(f)
-	
-end
-
-local function battFilesDirExists()
-	local info = fstat(BATTFILES_DIR)
-	
-	if info == nil or ( info.attrib ~= AM_DIR) then
-      print( BATTFILES_DIR .. " not exist or not a directory !!!!! ")
-		return false
-   end
-
-	return true
-end
-
-function settings.listBatfiles()
-	local csv_files = {}
-
-	-- Ellenőrizzük a mappa létezését
-	
-	if battFilesDirExists() then
-	
-		for fname in dir( BATTFILES_DIR ) do
-			if string.sub(fname, -4) == ".csv" then
-				csv_files[ #csv_files + 1 ] = fname
-			end
-		end
-		
-	else
-		return nil -- Vagy egy üres táblázatot adhatunk vissza, ha ez a kívánt viselkedés
-	end
-
-	--csv_files = { "a" , "b" }
-	
-	if #csv_files == 0 then
-		createDemoBatFile()
-		settings.listBatfiles()
-	end
-	
-	--printAssoc( "listBatfiles()" , csv_files, true )
-	
-	return csv_files
-end
-
 function settings.getBattFiles()
 	return battFiles
 end
@@ -152,7 +96,6 @@ function settings.settingsLoad()
 	settings.Timer						= data.Timer or 0
 
 	-- Behavior page or 1
-	settings.battFile					= data.battFile or DEMO_BATT_FILENAME
 	settings.landingPercent			= data.landingPercent or 60
 	settings.logPath					= data.logPath	or 1
 	settings.dtFormat					= data.dtFormat or 1
@@ -164,12 +107,6 @@ function settings.settingsLoad()
 	settings.warningBatOverUse		= data.warningBatOverUse or 25
 	settings.hapticPercent			= perenctString2Table( data.hapticPercent or "0|0|20|10|5|2" )
 	settings.soundPercent			= perenctString2Table( data.soundPercent  or "75|50|25|15|10|5" )
-	
-	-- Check batFile exists	
-	if fstat( settings.getBattFileFullPath() ) == nil then
-		settings.battFile = DEMO_BATT_FILENAME
-	end
-	
 
 end
 
@@ -184,12 +121,12 @@ function settings.settingsSave()
 		return false
 	end
 	
-	-- d.log("fejelc elött", 0 )
+	-- app.d.log("fejelc elött, filename =", filename )
 	
 	
 	io.write(	file, 
 					"batVoltSource,batUsedMAhSource,batMaxMAhSource,quickSelChannel,batBackupVolt,batCell,Timer,"  ..
-					"battFile,logPath,landingPercent,dtFormat,warnWhenBatConnect,warnFlyBegin,flyOverHapticSec," ..
+					"logPath,landingPercent,dtFormat,warnWhenBatConnect,warnFlyBegin,flyOverHapticSec," ..
 					"warningBatDissconnectOnFly,minBatStartVolt,warningBatOverUse,hapticPercent,soundPercent" ..
 					"\n"
 				)
@@ -209,7 +146,7 @@ function settings.settingsSave()
 					settings.batCell .. "," .. 
 					settings.Timer	.. "," .. 
 					
-					"\"" .. settings.getBattFile() .. "\"" .. "," ..
+					-- "\"" .. settings.getBattFile() .. "\"" .. "," ..
 					settings.logPath	.. "," ..
 					settings.landingPercent .. "," .. 
 					settings.dtFormat	 .. "," .. 
@@ -406,40 +343,16 @@ function settings.getSoundPercentAll()
 	return settings.soundPercent
 end
 
-function settings.setBattFile( s )
-	settings.battFile = s
-	settings.settingsSave()	
+-- function settings.setBattFile( s )
+	-- settings.battFile = s
+	-- settings.settingsSave()	
 	
-	-- Todo : Itt változik az aksi file, az újat be kell olvasni, friossíteni flyData -t.
-	-- Vagy : Itt:  widget.setInputPage(), ahol ez a kód részlet, meghívásra került
-end 
+	-- -- Todo : Itt változik az aksi file, az újat be kell olvasni, friossíteni flyData -t.
+	-- -- Vagy : Itt:  widget.setInputPage(), ahol ez a kód részlet, meghívásra került
+-- end 
  
 function settings.getBattFile( )
 	return settings.battFile
-end
-
-function settings.getBattFileFullPath( )
-	return BATTFILES_DIR .. "/" .. settings.battFile
-end
-
-function settings.setBattFileID( n )
-	-- Batt listából a kiválasztott név kerül elmentésre a sorszám alapján
-	settings.setBattFile( settings.battFiles[ n ] )
-	
-end 
- 
-function settings.getBattFileID()
-	-- filenév tárolva, de a listában a sorszáma kell..
-	local bf = settings.battFiles
-	local n = 1		-- default the first item
-
-	for i = 1, #bf do
-		if settings.battFile == bf[ i ] then
-			n = i
-		end
-	end
-
-	return n
 end
 
 function settings.setQuickSelChannel(  s )
@@ -457,8 +370,7 @@ end
 settings.setFileName( filename )
 settings.settingsLoad()
 
---app.d.printAssoc( "settings" , settings )
+-- app.d.printAssoc( "settings" , settings )
 
-settings.battFiles = settings.listBatfiles()
 
 return settings

@@ -12,32 +12,43 @@
 ###########################################################################
 ## License GNU General Public License v3.0                               ##
 #########################################################################]]
+-- Debug Window filter : /(.:BattUse.|.:BattUse.^f_stat|filerw|error^f_stat|warning|^f_stat|-(E|W)-)/i
+
 local app = {}
 
 app.name  = "BattUse"
 app.version = "v1.0.0 RC1"
+
+app.currentModelName	= ""
+
 app.dir = "/WIDGETS/BattUse/"
+app.modelConfigPath	= app.dir .. "models/"
+
+app.batFilePath	= app.dir .. "batfiles/"
+app.batFileName	= "batteries.csv"
+
+app.cbmFilePath	= app.dir .. "/batfiles/"
+app.cbmFileName	= "batmodel.csv"
+
 
 local settings	= {}
 local flyData	= {}
-local objLoaded = false
+local loadedModel = ""
 
 local batFile	= {}
 
--- Debug Window filter : /(.:BattUse.|.:BattUse.^f_stat|filerw|error^f_stat|warning|^f_stat|-(E|W)-)/i
-
 local options =	{	
 							{ "Display"	, CHOICE	,	1, {	
-																	"Battery Name"	,
-																	"Battery Percent"	,
+																	"Battery name"	,
+																	"Battery properties"	,		-- Product, Capacity
+																	"Battery status"	,			-- Battery Voltage in %
+																	"Flight Count"	,
 																	"Fly Time"	,
-																	"Landing target	"	,
-																	"Last Use"	,
-																	"mAh Percent"	,
-																	"MAX Amp"	,
-																	"Product, Capacity"	,
-																	"Quick Select"	,
-																	"Start Count"																	
+																	"Landing target %"	,
+																	"Last used"	,
+																	"Peak current"	,				-- MAX Amp
+																	"Quick Selector"	,
+																	"Remaining charge"	,		-- mAh Percent : % Line
 																} 
 							}
 						}
@@ -45,15 +56,18 @@ local options =	{
 
 local function create(zone, options )
 	local mi = model.getInfo()
-	local modelConfigFile = string.format( "%s/%s.cfg"   , app.dir , mi.name )
+	local modelConfigFile = app.modelConfigPath .. mi.name .. ".cfg"
 	local errMsg
+
+	app.currentModelName	= mi.name
+	
+	-- print( ":BattUse: Create() Widget Start. Model:" .. app.currentModelName )
 	
 	if (lvgl == nil) then
 		return {zone = zone, options = options, name = app.name }
 	end
 	
-	if  not objLoaded then
-	
+	if loadedModel ~= mi.name then
 		local dbg 
 		dbg,  errMsg = loadScript( app.dir .. "d.lua" )( app.name ) 
 		app.d = dbg
@@ -69,14 +83,18 @@ local function create(zone, options )
 		-- app.d.log( "flyData.selBatteryName" , flyData.selBatteryName , "create()" )
 
 		-- ================================================================================
+		-- Load only once
+		
 		flyData, errMsg = loadScript( app.dir .. "fd.lua" )( app , batFile ) 
-
+		
 		if errMsg then
 			print( ":BattUse : FD load error:" ..  errMsg )
 			widget.errMsg = errMsg
 		end
 
-		 objLoaded = true
+		loadedModel = mi.name
+		print( ":BattUse: Create() Loaded Model:" .. loadedModel  )
+		
 	end
 	
 	-- ================================================================================

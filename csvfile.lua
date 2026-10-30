@@ -2,8 +2,7 @@
 ##  csvfile.lua - Read/Write/Update csv format file                      ##
 ##                                                                       ##
 ## Author:  BeGab                                                        ##
-## Date:    2024-07-20                                                   ##
-## Version: 0.5.0                                                        ##
+##                                                                       ##
 ## URL : https://github.com/Be-Gab/BattUse                               ##
 ##                                                                       ##
 ##                      Copyright (C) "BeGab"                            ##
@@ -11,7 +10,7 @@
 ###########################################################################
 ## License GNU General Public License v3.0                               ##
 #########################################################################]]
-local app_ver = "0.5"
+local app_ver = "0.6"
 local fileRW = {}
 
 local string_gsub = string.gsub 
@@ -24,9 +23,9 @@ local LF = "\n"  			-- LineFeed
 local fieldNames = {}	-- fieldnames in indexed table
 local fieldPos = {}		-- fieldnames in associated table
 
-local fieldType = {}		-- field types, string or numeric
-local NUMERIC = 0
-local STRING  = 1
+local fieldType = {}		-- field types, string or numeric 
+local NUMERIC = 1
+local STRING  = 2
 
 --#########################################################################--
 
@@ -37,6 +36,12 @@ end
 function fileRW.log(s)
 --  return;
   print("BattUse: fileRW : " .. s)
+end
+
+-- 0 - numeric, 1 - string
+function fileRW.setFieldDataType( fieldPs, fieldTy )
+	-- fileRW.log("Ps, Ty : " .. fieldPs .. ", " .. fieldTy )
+	fieldType[ fieldPs ] = fieldTy
 end
 
 function fileRW.readCsv(readFileName)
@@ -53,7 +58,14 @@ function fileRW.readCsv(readFileName)
 		return nil
    end
 	
+	-- fileRW.log( "fileName:" ..fileName )
+	
    local file = io.open(fileName, "r")
+
+	if file == nil then
+		 fileRW.log("Hiba a fájl megnyitásakor : " .. fileName )
+		 return nil
+	end
 
 	buffer = io.read(file, 2048 * 32)  
 
@@ -78,7 +90,7 @@ function fileRW.readCsv(readFileName)
 		else
 			
 			-- Read DataLines
-			--fileRW.log( "itemId: " .. itemID )
+			-- fileRW.log( "itemId: " .. itemID )
 			 
 			local cnt = 1
 			local fields = {}
@@ -90,21 +102,21 @@ function fileRW.readCsv(readFileName)
 
 				-- fileRW.log( "readCsv :: Line/field A: " .. itemID .. "/" .. cnt .. ":" .. v  .. "<>" .. val )
 
-				if val ~= v then
-					if itemID == 1 then
+				if itemID == 1 and fieldType[ cnt ] == nil then
+					if val ~= v then
 						fieldType[ cnt ] = STRING
-					end
-				else
-					if itemID == 1 then
+					else
 						fieldType[ cnt ] = NUMERIC
 					end
-					val = tonumber( val )
-					
-					-- if val == nil then
-						-- print( "fileRW.readCsv: Not numeric! (field:" , fieldNames[cnt]  , " value: [" , v , "] )" )
-					-- end 
-					
 				end
+				
+				-- if val == nil then
+					-- print( "fileRW.readCsv: Not numeric! (field:" , fieldNames[cnt]  , " value: [" , v , "] )" )
+				-- end 
+				
+				if fieldType[ cnt ] == NUMERIC then
+					val = tonumber( val )
+				end		
 			
 				fields[ fieldNames[cnt] ] = val
 				-- fileRW.log( "Line/field B: " .. itemID .. "/" .. cnt .. " : " .. fieldNames[cnt] .. " => "  .. tostring( val ) .. "/" .. v )
@@ -243,7 +255,7 @@ function fileRW.updateRow( rowID , newRow )
 end
 
 -- Csak azok a mezők kerülnek be, amik szerepelnek a fejlécben
--- create new record filled with fields in [newRow] (new field not creatable)
+-- create new record filled with fields in [newRow] (can't create new field )
 function fileRW.addRow( newRow )
 	local newRowID = #fileLines + 1 
 	
@@ -274,6 +286,13 @@ function fileRW.delRow( rowID )
 		return table.remove( fileLines, rowID );
 	end
 		
+end
+
+-- delete all record without heading 
+function fileRW.clearData()
+
+	fileLines	= {}
+
 end
 
 -- get fields value of the specified record in [rowID] 
@@ -361,7 +380,6 @@ function fileRW.txtTableData()
 		for k , v in ipairs(fieldNames) do
 
 			-- fileRW.log( "fileRW.txtTableData, Fields k:" .. k .. " row : " .. v )
-
 
 			if v == nil or row[ v ] == nil then	-- Field exists but do not have value
 				rowVal = ""

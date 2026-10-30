@@ -1,4 +1,5 @@
-.vscode/settings.json
+.vscode/
+
 *.luac
 /documents
 
@@ -10,5 +11,6 @@
 /batfiles/*
 !/batfiles/.gitkeep
 
-
-*.cfg
+#models dir empty
+/models/*
+!/models/.gitkeep

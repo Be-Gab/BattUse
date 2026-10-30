@@ -32,6 +32,7 @@ function dispBatteryID( widget )
 					children = {
 							{	type	= "label", 
 								w		= widget.zone.w , 
+								x		= 6 * lvgl.LCD_SCALE,
 								align	= LEFT, 
 								font	= SMLSIZE,
 								text	=	function(s)
@@ -73,9 +74,13 @@ end
 
 function dispProdCapa( widget )
 	local WZW = math.floor( widget.zone.w  / 2) * 2		-- Párosszámra lefelé kerekítve.
+	
+	-- app.d.log( "WZW" , WZW , "dispProdCapa()" )	
+	-- app.d.printAssoc( "dispProdCapa() ::  flyData.batteryRec" , flyData.batteryRec )
+	
 	local f = 0
 	
-	if widget.zone.h / 2 < 22 then
+	if widget.zone.h / 2 < ( 22 * lvgl.LCD_SCALE ) then
 		f = SMLSIZE
 	end	
 	-- d.log( "widget.zone.w = " ,widget.zone.w, "dispProdCapa()" )
@@ -113,11 +118,12 @@ function dispProdCapa( widget )
 								w		= ( WZW -2 ) / 2 , 
 								text	=	function(s)        
 												if flyData.saved.isSaved then;
-													s = flyData.saved.batCell or "-";
-												else
-													s = flyData.batteryRec.cells or "-";
-												end;												
-												return s .. "S" ;
+													s = flyData.saved.batMaxVolt or "";
+												else;
+													s = flyData.batteryRec.maxVolt or "";
+												end;
+												
+												return s .. "V/cell" ;
 											end	
 							}
 						}
@@ -126,17 +132,25 @@ function dispProdCapa( widget )
 					{	type = "box", 
 						flexFlow = lvgl.FLOW_ROW , 
 						flexPad	= 0,
-						w			= WZW - 2, 
+						w			= WZW , 
 						children = {
 							{	type	= "label", 
-								w		= ( WZW -2 ) / 2 , 
+								w		= WZW * .7 , 
 								font	= f,
 								align = LEFT, 
 								text	=	function(s)        
 												if flyData.saved.isSaved then;
-													s = flyData.saved.batCapcity or "-";
+													if flyData.saved.batCapacity and  flyData.saved.batMaxCapacity then;
+														s = flyData.saved.batMaxCapacity .. " / " .. flyData.saved.batCapacity;
+													else;
+														s = "-";
+													end;
 												else;
-													s = flyData.batteryRec.capacity or "-";
+													if flyData.batteryRec.capacity then;
+														s = flyData.batteryRec.maxCapacity .. " / " .. flyData.batteryRec.capacity;
+													else;
+														s = "-";
+													end;
 												end;
 
 												return s .. " mAh" ;
@@ -144,17 +158,16 @@ function dispProdCapa( widget )
 							} 
 							,
 							{	type	= "label", 
-								w		= ( WZW -2 ) / 2 , 
+								w		= WZW * .3 , 
 								font	= f,
 								align = RIGHT, 
 								text	=	function(s)        
 												if flyData.saved.isSaved then;
-													s = flyData.saved.batMaxVolt or "";
-												else;
-													s = flyData.batteryRec.maxVolt or "";
-												end;
-												
-												return s .. "V/cell" ;
+													s = flyData.saved.batCell or "-";
+												else
+													s = flyData.batteryRec.cells or "-";
+												end;												
+												return s .. "S" ;
 											end	
 							}
 						}
@@ -177,18 +190,22 @@ function dispLastUseDateTime( widget )
 	
    widget.ui = lvgl.build({
 		{	type		= "box", 
-			flexFlow	= lvgl.FLOW_COLUMN,
+			-- flexFlow	= lvgl.FLOW_COLUMN,
 			align		= CENTER, 
+			w		= widget.zone.w ,
+			h		= widget.zone.h ,
+			
 			children = {
 				{	type	= "label", 
 					w		= widget.zone.w , 
+					x		= 6 * lvgl.LCD_SCALE,
 					align	= LEFT, 
 					font	= SMLSIZE,
 					text	= "Last use" 					
 				}	,
 				{	type	= "label", 
 					w		= widget.zone.w , 
-					align = CENTER, 
+					align = CENTER + VCENTER, 
 					font	=  MIDSIZE, --0,
 					color =	function()
 									local dtColor = COLOR_THEME_SECONDARY1;
@@ -217,62 +234,125 @@ function dispLastUseDateTime( widget )
 
 end
 
-function dispStartCount( widget )
-
-   widget.ui = lvgl.build({
-		{	type	= "box", 
-			w		= widget.zone.w ,
-			h		= widget.zone.h ,
-			align	= CENTER, 
-			children = {
-				{	type	= "box", 
-					align	= CENTER, 
-					children= {
-						{	type	= "label", 
-							w		= widget.zone.w , 
-							align	= LEFT, 
-							w		= 60,
-							font	= SMLSIZE,
-							text	= "Start counter"	
-						}	
-					}
-				} 
-				,
-				{	type	= "box", 
-					y		=	0, 
-					h		=	widget.zone.h,
-					children = {
-						{	type	= "label", 
-							w		= widget.zone.w , 
-							align	= CENTER + VCENTER, 
-							font	= flyData.fontSize( widget.zone.h ) ,
-							text	=	function()
-											local s ="";
-											if flyData.saved.isSaved then;
-												s = flyData.saved.batFlightCount;
-											else;
-												if flyData.batteryRec.id ~= nil then;
-													s = flyData.batteryRec.count;
-												else;
-													s = "-";
-												end;
-											end;
-											return s;
-										end	
+function dispStartCount( widget )				-- Fly Count
+	local ui 
+	
+	-- app.d.printAssoc( "dispStartCount() : widget" , widget  )
+	
+	if widget.isTopBar then
+	
+		ui =	{
+					{	type	= "box", -- color = RED, filled = true,
+						y			= -2 * lvgl.LCD_SCALE ,
+						flexPad	= 0,
+						w		= widget.zone.w ,
+						h		= widget.zone.h ,
+						flexFlow = lvgl.FLOW_COLUMN,
+						align	= CENTER , 
+						children = {
+							{	type	= "box", 
+								align	= CENTER, 
+								children= {
+									{	type	= "label", 
+										w		= widget.zone.w , 
+										align	= CENTER, 
+										color = COLOR_THEME_PRIMARY2 ,
+										font	= SMLSIZE,
+										text	= "Bat Flight"	
+									}	
+								}
+							} 
+							,
+							{	type	= "box", 
+								y		=	0, 
+								h		=	widget.zone.h,
+								children = {
+									{	type	= "label", 
+										w		= widget.zone.w , 
+										align	= CENTER, -- + VCENTER, 
+										color = COLOR_THEME_PRIMARY2 ,
+										font	= 0 , --SMLSIZE , -- flyData.fontSize( widget.zone.h ) ,
+										text	=	function()
+														local s ="";
+														if flyData.saved.isSaved then;
+															s = flyData.saved.batAllFlightCount;		--batFlightCount;
+														else;
+															if flyData.batteryRec.id ~= nil then;
+																s = flyData.batteryRec.count + flyData.batteryRec.earlyCount;
+															else;
+																s = "-";
+															end;
+														end;
+														return s;
+													end	
+									}
+								}		
+							}
 						}
-					}		
-				}
-			}
 
+					}
+				}
+			
+	else
+	
+		ui = {
+				{	type	= "box", 
+					w		= widget.zone.w ,
+					h		= widget.zone.h ,
+					align	= CENTER, 
+					children = {
+						{	type	= "box", 
+							align	= CENTER, 
+							children= {
+								{	type	= "label", 
+									align	= LEFT, 
+									w		= 74 * lvgl.LCD_SCALE,
+									x		= 6  * lvgl.LCD_SCALE,
+									font	= SMLSIZE,
+									text	= "Battery flight count"	
+								}	
+							}
+						} 
+						,
+						{	type	= "box", 
+							y		=	0, 
+							h		=	widget.zone.h,
+							children = {
+								{	type	= "label", 
+									w		= widget.zone.w , 
+									align	= CENTER + VCENTER, 
+									font	= flyData.fontSize( widget.zone.h ) ,
+									text	=	function()
+													local s ="";
+													if flyData.saved.isSaved then;
+														s = flyData.saved.batAllFlightCount;		--batFlightCount;
+													else;
+														if flyData.batteryRec.id ~= nil then;
+															s = flyData.batteryRec.count + flyData.batteryRec.earlyCount;
+														else;
+															s = "-";
+														end;
+													end;
+													return s;
+												end	
+								}
+							}		
+						}
+					}
+
+				}
 		}
-	});
+		
+	end
+	
+   widget.ui = lvgl.build( ui )
 
 end
 
 function dispFlyTime( widget )
 	local ROUND = 8
-	local BORDER_WIDTH = 3
-	local BOX_WIDTH = math.min( widget.zone.w , 180 )
+	local BORDER_WIDTH = 3  * lvgl.LCD_SCALE
+	local BOX_WIDTH = math.min( widget.zone.w , ( 180 * lvgl.LCD_SCALE ) )
 	local FontSize = 0
 
 	local box_h = widget.zone.h - BORDER_WIDTH
@@ -340,33 +420,34 @@ function dispFlyTime( widget )
 
 end
 
-function dispMahPercent( widget )
+function dispMahPercent( widget )				--	Remaining charge
 	-- [Kirepülhető mAh]	[Kirepült mAh]
 	-- 		Csík a %-al
 	--	[Induló %]	[ Tervezett vége %]
+	
+	-- app.d.printAssoc( "dispMahPercent() : widget" , widget  )
 
 	local WZH 				= widget.zone.h
 	local WZW				= widget.zone.w
-	local INFO_LINE_INS	= 10
+	local INFO_LINE_INS	= 10 * lvgl.LCD_SCALE
 	
 	-- app.d.log( "WZH" , WZH , "dispMahPercent()" )
 	
-	-- WZH = 39
-	local INFO_LINE_H		= 15
+	local INFO_LINE_H		= 15 * lvgl.LCD_SCALE
 	local INFO_LINE_FONT	= SMLSIZE
 		
 	if WZH > 80 then
-		INFO_LINE_H		= 20
+		INFO_LINE_H		= 20 * lvgl.LCD_SCALE
 		INFO_LINE_FONT	= 0 --SMLSIZE
 		
-	elseif WZH <= 39 then -- Top Main
+	elseif widget.isTopBar then -- Top Bar
 		INFO_LINE_H		= 0
 		INFO_LINE_FONT	= 0 --SMLSIZE
 
 	end
 	
 	local PERCENT_H		= WZH - INFO_LINE_H - INFO_LINE_H
-	local PERCENT_BORDER	= 2
+	local PERCENT_BORDER	= math.floor(  2 * lvgl.LCD_SCALE )
 	local PERCENT_FONT	= flyData.fontSize( PERCENT_H )
 
 	local disp =	{	type		= "box",
@@ -547,7 +628,7 @@ function dispMahPercent( widget )
 																end;
 															end;
 
-															if p < 60 then;
+															if p < PERCENT_LINE_GREEN then;
 																return RED;
 															-- elseif p > 90 then;
 																-- return WHITE;
@@ -597,9 +678,10 @@ function dispMaxAmp( widget )
 					children = {
 							{	type	= "label", 
 								w		= widget.zone.w , 
+								x		= 6 * lvgl.LCD_SCALE,
 								align	= LEFT, 
 								font	= SMLSIZE,
-								text	=	"MAX Amp"	
+								text	=	"Max current draw"	
 							}	
 					}
 				} 
@@ -611,7 +693,7 @@ function dispMaxAmp( widget )
 						{	type	= "label", 
 							w		= widget.zone.w , 
 							align	= CENTER + VCENTER, 
-							font	= flyData.fontSize( widget.zone.h - 11 ) ,
+							font	= flyData.fontSize( widget.zone.h - ( 11 * lvgl.LCD_SCALE ) ) ,
 							text	= 	function(s)
 											if flyData.saved.isSaved then;
 												a = flyData.saved.maxAmp;
@@ -631,85 +713,25 @@ function dispMaxAmp( widget )
 
 end
 
-function dispBatteryPercent( widget )
+function dispBatteryPercent( widget )			-- Battery Status
+	local state
+	local st = {}
+	st.NODATA			= 0
+	st.BEFORE_START_LOW_BATTERY	= 1
+	st.BEFORE_START	= 2
+	st.START				= 3
+	st.START_END		= 4
 	
-	-- app.d.printAssoc( ".zone " , widget.zone , "dispBatteryPercent()" )
+	state = st.NODATA
+	
+	-- app.d.log( "widget.zone.h" , widget.zone.h, "dispBatteryPercent()" )
+	-- app.d.log( "flyData.fontSize( widget.zone.h )" , flyData.fontSize( widget.zone.h ) , "dispBatteryPercent()" )
+	
+	app.d.printAssoc( ".widget " , widget, "dispBatteryPercent()" )
 
-	if widget.zone.h >= 40 then	-- 40 !
-	
-		-- Widget on screen
-		
-		local SHIFT = 16
-		local BCK_SHIFT = math.min( 4 , ( widget.zone.h - SHIFT ) / 20 )
-		
-		
-	   widget.ui = lvgl.build({
-			{	type		= "box", 
-				align		= CENTER, 
-				children = {
-					{	type		= "box",
-						children = {
-							{	type	= "label" ,
-								w		= widget.zone.w ,
-								-- align	= LEFT ,
-								font	= SMLSIZE ,
-								w		= 60,
-								text	=	"Battery Volt"
-							}
-							,
-							{	type	= "label" , 
-								w		= widget.zone.w , 
-								align	= RIGHT ,
-								font	= 0 ,
-								color	=	function()
-												local c = COLOR_THEME_SECONDARY1;
-												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
-													if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then;
-														c = RED;
-													end;
-												end;
-												return c;
-											end ,
-								text	=	function()
-												local s = "";
-												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
-													s = math.floor( flyData.batVoltReadSensor() )  .. " V " 
-													if flyData.isHV() then
-														s = s .. ", HV"
-													end
-												end;
-												return s;
-											end ,
-							}
-						}
-					}
-					,
-					{	type	= "box", 		-- %
-						y		=	0,
-						h		=	widget.zone.h,
-						children = {
-							{	type	= "label", 
-								-- y = 16,
-								w		= widget.zone.w , 
-								font	=  flyData.fontSize( widget.zone.h ) , 
-								align	= CENTER, --  + VCENTER, 
-								text	=	function()
-												local s = "--";
-												if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
-													s = flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) .. "%";
-												end;
-												return s;
-											end
-							}
-						}
-					}
-				}
-			}
-		});
+	if widget.isTopBar then	-- 40 !
 
-	else
-	
-		-- MAIN position (ON TOP)
+		-- position (ON TOP Bar)
 		r = ( widget.zone.h - 1 ) / 2
 		 
 		widget.ui = lvgl.build({
@@ -767,21 +789,170 @@ function dispBatteryPercent( widget )
 				}
 			} 
 		});
+	
+	else
+	
+		-- Widget on screen
 		
+		-- local SHIFT = 16
+		-- local BCK_SHIFT = math.min( 4 , ( widget.zone.h - SHIFT ) / 20 )
+		
+	   widget.ui = lvgl.build({
+			{	type		=	"rectangle" , 
+				align		=	CENTER , 
+				thickness=	0 ,
+				color		=	COLOR_THEME_WARNING,
+				rounded	= 8 * lvgl.LCD_SCALE ,
+				filled	=	function()
+									
+									if flyData.flightStartTime == nil then
+
+										state = st.BEFORE_START
+									
+										if  flyData.IsBatteryConnected()  then
+											if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then
+												state = st.BEFORE_START_LOW_BATTERY
+											end
+										end
+
+									elseif flyData.saved.isSaved then -- LEszállUtán
+										state = st.START_END
+									else			-- repül
+										state = st.START
+									end
+									
+									return ( st.BEFORE_START_LOW_BATTERY == state );
+									
+								end,
+				children = {
+					{	type		= "box",
+						children = {
+							{	type	= "label" ,
+								x		= 6 * lvgl.LCD_SCALE,
+								font	= SMLSIZE ,
+								w		= 60 * lvgl.LCD_SCALE,
+								text	=	"Battery Volt" ,
+								color	=	function()
+												c = COLOR_THEME_SECONDARY1;
+												if state == st.BEFORE_START_LOW_BATTERY then;
+													c = WHITE;
+												end;
+												return c;
+											end
+							}
+							,
+							{	type	= "label" , 
+								w		= widget.zone.w - ( 6 * lvgl.LCD_SCALE ) , 
+								align	= RIGHT ,
+								font	= 0 ,
+								color	=	function()
+												local c = COLOR_THEME_SECONDARY1;
+												
+												if state == st.BEFORE_START_LOW_BATTERY then;
+													c = WHITE;
+	
+												elseif state == st.START_END then;
+	
+													if flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) < flyData.minBatStartVolt then;
+														c = RED;
+													end;
+													
+												end;
+												
+												return c;
+											end ,
+								text	=	function()
+												local s = "";
+												
+												if flyData.saved.isSaved then;
+													s = s .. flyData.saved.batVoltEnd .. " V ";  -- batCapacity ???;
+													if flyData.saved.isHV then;
+														s = s .. ", HV";
+													end;
+												else;
+												
+													if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
+														s = math.floor( flyData.batVoltReadSensor() )  .. " V " ;
+														if flyData.isHV() then;
+															s = s .. ", HV";
+														end;
+													end;
+													
+												end;
+												
+												return s;
+											end ,
+							}
+						}
+					}
+					,
+					{	type	= "box", 		-- %
+						y		=	0,
+						h		=	widget.zone.h,
+						children = {
+							{	type	= "label", 
+								-- y = 16,
+								w		= widget.zone.w , 
+								font	= flyData.fontSize( widget.zone.h ) , 
+								align	= CENTER + VCENTER, 
+								color	=	function()
+												local c = COLOR_THEME_SECONDARY1;
+												if  state == st.BEFORE_START_LOW_BATTERY then;
+													c = YELLOW;
+												end;
+												return c;
+											end ,								
+								text	=	function()
+												local s = "";
+
+												if flyData.saved.isSaved then;
+													s = s .. flyData.saved.batPercentEnd .."%";
+												else;
+													
+													if flyData.IsBatteryConnected() and getFlightMode() == 0 then;
+														s = flyData.getPercent( flyData.batVoltReadSensor() / flyData.getCells() ) .. "%";
+													end;
+												
+												end;
+												
+												return s;
+											end
+							}
+						}
+					}
+				}
+			}
+		});
+
 	end
 end
 
 function dispQuickSelect( widget )
-	local batList = flyData.getBatteryTable()
+	local batListAll = flyData.getBatteryTable()
+	local batList = {}
 	local batBox = {}
-	local boxW = ( widget.zone.w / #batList ) -2 - ( #batList * 1 )
-	local boxH = widget.zone.h - 40
-	local chRange = ( 2048 / #batList ) + 1
 	local previousQS_ChannelValue = -1
 	
+	-- app.d.printAssoc( "dispQuickSelect() -> batListAll" , batListAll )
+	
+	-- Filter: Live and assigned batteries
+	for key , row in pairs(batListAll) do
+	
+		if row.retireDate == "" and
+			flyData.isBatModelConnected( row.id , app.currentModelName )	then	
+
+			-- batList[ key ] = row
+			batList[ #batList+1 ] = row
+			
+		end  
+	end
+	
 	-- app.d.printAssoc( "dispQuickSelect() -> batList" , batList )
-	
-	
+
+	local boxW = ( widget.zone.w / #batList ) -2 - ( #batList * 1 )
+	local boxH = widget.zone.h - ( 40 * lvgl.LCD_SCALE )
+	local chRange = ( 2048 / #batList ) + 1
+		
 	-- for i = 1, #flyData.batteryRec do
 	for i = 1, #batList do
 	
@@ -811,6 +982,7 @@ function dispQuickSelect( widget )
 		
 	end
 
+	-- app.d.printAssoc( "dispQuickSelect() -> batBox" , batBox )
 
    widget.ui = lvgl.build({
 			{	type		= "box", 
@@ -849,10 +1021,12 @@ function dispQuickSelect( widget )
 									text	=	function(s)
 													local qsValue = 1024 + getValue( flyData.quickSelChannel );
 													
+													-- app.d.log( "qsValue" , qsValue , "dispQuickSelect()" )
+													
 													if ( 0 < flyData.quickSelChannel ) and
 														previousQS_ChannelValue ~= qsValue then;
 														
-														previousQS_ChannelValue = qsValue
+														previousQS_ChannelValue = qsValue;
 														
 														if not flyData.flightStartTime and 
 															not flyData.isQuickSelectLocked() then;
@@ -861,6 +1035,10 @@ function dispQuickSelect( widget )
 	
 															local b = math.floor( qsValue / chRange ) + 1;
 															local d = batList[ b ].id;
+
+															-- app.d.log( "b" , b , "dispQuickSelect()" );
+															-- app.d.log( "d" , d , "dispQuickSelect()" );
+
 															
 															if d ~= flyData.batteryRec.id then;
 																flyData.selectBatteryByID( batList[ b ].id );
@@ -883,25 +1061,7 @@ function dispQuickSelect( widget )
 						flexPad	= lvgl.PAD_SMALL ,
 						children = 	batBox
 					}
-					,
-					{	type	= "box", 
-						w		=	widget.zone.w,
-						children = {
-							{	type	= "label", 
-								w		= widget.zone.w , 
-								align	= CENTER + VCENTER, 
-								font	= MIDSIZE,
-								text	=	function()
-												if flyData.saved.isSaved then;
-													batId = flyData.saved.batteryID;
-												else;
-													batId = flyData.batteryRec.id or "Select Battery!" ;
-												end;
-												return batId ;
-											end
-							}
-						}
-					}
+
 				}
 
 			}
@@ -920,10 +1080,10 @@ function dispLandingTarget( widget )
 					align	= CENTER, 
 					children= {
 						{	type	= "label", 
-							w		= widget.zone.w , 
+							x		= 6 * lvgl.LCD_SCALE,
 							align	= LEFT, 
 							font	= SMLSIZE,
-							w		= 60 ,
+							w		= 60 * lvgl.LCD_SCALE ,
 							text	= "Landing target"	
 						}	
 					}
@@ -950,8 +1110,6 @@ function dispLandingTarget( widget )
 	
 	
 end
-
-
 
 function dispError( widget )
 	 

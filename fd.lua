@@ -17,6 +17,8 @@ local BATTERY_DISCONNECTED	= 0
 
 QS_LOCK_POSITION_OFF	= 10000
 
+local batFilesModifyTime = "---"
+
 local BATTERY_WARN_ONCONNECT_SOUND	= app.dir .. "media/" .. "batsel.wav"
 local BATTERY_WARN_ONFLYMODEL_SOUND	= app.dir .. "media/" .. "batno.wav"
 local FLYMAH_OVERUSE_HAPTIC_SOUND	= app.dir .. "media/" .. "batlow.wav"
@@ -27,14 +29,15 @@ flyData = {
 								isSaved = false 
 							} ,
 				selectedBatteryRecNum = 0,
-				selBatteryName = "Select Battery" ,
-				batStatus = BATTERY_DISCONNECTED ,
-				batteryRec = {},
-				flightEndTime = nil,
+				selBatteryName	= "Select Battery" ,
+				batStatus		= BATTERY_DISCONNECTED ,
+				batteryRec		= {},
+				flightEndTime	= nil,
 				previousFlightMode = 0,
 				lastOverUseSec = nil,
-				dateFormat = 1,
+				dateFormat	= 1,
 				usedIsToday = false,
+				cbmData		= {} ,			-- Connect Battery -Model
 				
 				mAhUsable		= 0,
 				mAhUsed			= 0,
@@ -102,7 +105,7 @@ end
 
 function flyData.fontSize( f )
 	-- h = 22, -- SMLSIZE
-	-- h = 26, -- 0
+	-- h = 26, -- 0 -- Normal
 	-- h = 34, -- MIDSIZE
 	-- h = 80, -- XXLSIZE
 
@@ -167,6 +170,7 @@ function flyData.setWarningBatDisconnectOnFly( p )
 end
 
 function flyData.setMinBatStartVolt( p )
+	-- percent value
 	flyData.minBatStartVolt = p
 end
 
@@ -192,7 +196,6 @@ function flyData.setUsedIsToday(l)
 	flyData.usedIsToday = l
 end
 
-
 function flyData.setQuickSelChannel(c)
 	flyData.quickSelChannel = c
 end
@@ -207,11 +210,17 @@ function flyData.getCells()
 end
 
 function flyData.isHV()
-	-- Ha van kiválasztott aksi, akkor onnan, ha nincs akkor nem HV.
-	if flyData.selectedBatteryRecNum > 0 then
-		return ( flyData.batteryRec.maxVolt > 4.2 )
+
+	if flyData.saved.isSaved then
+		return flyData.saved.isHV
 	else
-		return false
+
+		-- Ha van kiválasztott aksi, akkor onnan, ha nincs akkor nem HV.
+		if flyData.selectedBatteryRecNum > 0 then
+			return ( flyData.batteryRec.maxVolt > 4.2 )
+		else
+			return false
+		end
 	end
 end
 
@@ -301,10 +310,15 @@ function flyData.Save( wgt )
 	
 	-- id,capacity,product,cells,earlyCount,count,firstStartDate,retireDate,lastStartDate
 	
+	-- app.d.printAssoc( "flyData.Save() , flyData :" , flyData )
+	
 	---------------------------------------------
-	flyData.saved.batVoltStart	= flyData.batVoltStart
+	flyData.saved.batVoltStart	= flyData.batVoltStart or 0
 	flyData.saved.batVoltEnd	= flyData.batVoltEnd
-	flyData.saved.batCell		= flyData.getCells() -- flyData.modelCells
+	flyData.saved.batCapacity	= flyData.batteryRec.capacity
+	flyData.saved.batMaxCapacity	= flyData.batteryRec.maxCapacity
+	
+	flyData.saved.batCell			= flyData.getCells() -- flyData.modelCells
 
 	-- d.printAssoc( "flyData" , flyData, false )
 	
@@ -322,15 +336,18 @@ function flyData.Save( wgt )
 		
 		-- batPercentStart
 
-		flyData.saved.batCapcity = 0
+		flyData.saved.batCapacity = 0
 		flyData.saved.batMaxVolt = "-"
 		flyData.saved.batLastFlight = ""
 		flyData.saved.batLastFlightFormated = ""
 		
 		flyData.saved.batFlightCount = "-"
+		flyData.saved.isHV = false
 		
 	else
 		-- Battery Selected
+		
+		flyData.saved.isHV = flyData.isHV()
 		
 		-- Formated date for widget
 		-- d.printAssoc( "flyDataSave()" , flyData )
@@ -363,7 +380,7 @@ function flyData.Save( wgt )
 		flyData.saved.batteryID			= flyData.batteryRec.id
 		flyData.saved.batteryProduct	= flyData.batteryRec.product
 	
-		flyData.saved.batCapcity		= flyData.batteryRec.capacity
+		flyData.saved.batCapacity		= flyData.batteryRec.capacity
 		
 		flyData.saved.batLastFlight	= flyData.batteryRec.lastStartDate
 
@@ -467,11 +484,19 @@ function flyData.selectBattery( recNum )
 end 
 
 function flyData.getLogFile()
-	-- FileName :: FlyLog_YYYYMM_[ModelNeve].csv
-	local dt = getDateTime()
-	local mi = model.getInfo()
+	-- -- FileName :: FlyLog_YYYYMM_[ModelNeve].csv
+	-- local dt = getDateTime()
+	-- local mi = model.getInfo()
 	
-	return flyData.logPath .. string.format( "FlyLog_%04d%02d_%s.csv", dt.year, dt.mon, mi.name )
+	-- return flyData.logPath .. string.format( "FlyLog_%04d%02d_%s.csv", dt.year, dt.mon, mi.name )
+
+	-- FileName :: FlyLog_YYYYMMDD_[ModelNeve]_[ID].csv
+	local dt = getDateTime()
+	
+	return	flyData.logPath .. 
+				string.format( "FlyLog_%04d%02d%02d_%s.csv", 
+									dt.year, dt.mon, dt.day, app.currentModelName )
+
 	
 end
 
@@ -625,18 +650,24 @@ function flyData.onBatteryConnectEvent(wgt, batVolt)
    -- d.log( "onBatteryConnectEvent() -> batVolt" , batVolt )
 
 	--  PlaySound
-	app.d.log( "play => BATTERY_ONCONNECT_SOUND:" , BATTERY_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
+	-- app.d.log( "play => BATTERY_ONCONNECT_SOUND:" , BATTERY_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
 	playFile( BATTERY_ONCONNECT_SOUND )
 	
 	-- playNumber(value, unit [, attributes])
 	-- 13 = UNIT_PERCENT
-	app.d.log( "play => Percent :" , batVolt , "flyData.onBatteryConnectEvent()"  )
+	-- app.d.log( "play => Percent :" , batVolt , "flyData.onBatteryConnectEvent()"  )
 	playNumber( p, UNIT_PERCENT )
 
-	if flyData.warnWhenBatConnect then
+	-- Warn ON and battery not selected
+	if flyData.warnWhenBatConnect and 
+		not flyData.batteryRec.id
+		-- #flyData.batteryRec == 0    
+		then
 	
 		--  PlaySound
-		app.d.log( "play => BATTERY_WARN_ONCONNECT_SOUND:" , BATTERY_WARN_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
+		-- app.d.log( "play => BATTERY_WARN_ONCONNECT_SOUND:" , BATTERY_WARN_ONCONNECT_SOUND , "flyData.onBatteryConnectEvent()"  )
+		-- app.d.log( "flyData.batteryRec.id:" ,  flyData.batteryRec.id , "flyData.onBatteryConnectEvent()"  )
+		-- app.d.log( "not flyData.batteryRec.id:" , not flyData.batteryRec.id , "flyData.onBatteryConnectEvent()"  )
 		playFile( BATTERY_WARN_ONCONNECT_SOUND )
 
 	end
@@ -650,8 +681,8 @@ function flyData.onBatteryConnectEvent(wgt, batVolt)
 	flyData.mAhCalcFlyable()	
 
 
-   app.d.log( "flyData.batVoltStart" , flyData.batVoltStart , "onBatteryConnectEvent()" )
-   app.d.log( "flyData.modelCells" , flyData.modelCells , "onBatteryConnectEvent()" )
+   -- app.d.log( "flyData.batVoltStart" , flyData.batVoltStart , "onBatteryConnectEvent()" )
+   -- app.d.log( "flyData.modelCells" , flyData.modelCells , "onBatteryConnectEvent()" )
 	
 end 
 
@@ -705,9 +736,6 @@ function flyData.onFlightStart(wgt)
 	if flyData.batStatus == BATTERY_DISCONNECTED then
 		flyData.SavedClear()
 	end
-	
-	-- TODO: Ez nem a settings ben van?  Figyelmeztetés ha felszálláskor nincs kiválasztott aksi.
-	-- settings.getWarnFlyBegin( )  => flyData.warnFlyBegin
 	
 	if flyData.warnFlyBegin and 
 		flyData.selectedBatteryRecNum == 0 then
@@ -853,10 +881,10 @@ function flyData.mAhCalcFlyable()
 		
 		flyData.mAhUsable = math.floor( usableCapacity - targetCapacity )
 		
-		-- d.log( "mAhFlyableCalc() :: startBatPercent =" , startBatPercent )
-		-- d.log( "mAhFlyableCalc() :: flyData.batteryRec.capacity =" , flyData.batteryRec.capacity )
-		-- d.log( "mAhFlyableCalc() :: usableCapacity =" , usableCapacity )
-		-- d.log( "mAhFlyableCalc() :: targetCapacity =" , targetCapacity )
+		-- app.d.log( "mAhFlyableCalc() :: startBatPercent =" , startBatPercent )
+		-- app.d.log( "mAhFlyableCalc() :: flyData.batteryRec.capacity =" , flyData.batteryRec.capacity )
+		-- app.d.log( "mAhFlyableCalc() :: usableCapacity =" , usableCapacity )
+		-- app.d.log( "mAhFlyableCalc() :: targetCapacity =" , targetCapacity )
 		-- app.d.log( "FlyableMAh" , flyData.mAhUsable , "mAhFlyableCalc()" )
 
 	else
@@ -906,7 +934,7 @@ function flyData.mAhReadSensor( wgt )
 		-- app.d.log( "uM:MaxAMP " , uM , "mAhReadSensor()") 
 		
 		-- TODO: Csak teszt RightSlider (RS)-hez vagy S2-höz
-		uM = uM + 1024
+		-- uM = uM + 1024
 
 		
 		if uM ~= nil and uM >= 0 then
@@ -929,24 +957,10 @@ function flyData.batVoltReadSensor()
 
 		local batVolt, isCurrent, isFresh = getSourceValue( flyData.voltReadSensor )
 		
-		if not isCurrent then 
-			batVolt = 0
-		end 
-	 
-		-- Start :: Teszthez  ====================================================================
-		-- TODO : Csak a teszthez az érték módosítása
-		-- Input -1024 - 1024, Inkább : 0 - 1014 :: 3,7 Volt - 4.2 Volt / Cell = 44.4 - 50,4 
-		-- 3.4 = 5% =>       40,8 - 50,4
-		
-		-- if batVolt < 1 then
+		-- if not isCurrent then 
 			-- batVolt = 0
-		-- else
-			-- batVolt = 40.8 + ( batVolt * 0.009375 )   -- [40.8 - 50.4]
-		-- end
-		
-		-- d.log(  "batVolt" , batVolt, "flyData.batVoltReadSensor()" )
-		-- End :: Teszthez  ======================================================================
-
+		-- end 
+	 
 	
 		return batVolt	
 		
@@ -1086,8 +1100,93 @@ function flyData.mAhActionClear()
 	
 end
 
-function flyData.readBatteryFile( batteryFile )
-	batFile.readCsv( batteryFile )
+function flyData.getBatFilesModifyTime()
+
+	function getFileTime( sPathFile )
+		local f, s
+		f =  fstat(sPathFile)
+		if f == nil then
+			return "-"
+		else
+		
+			s = f.time.year .. f.time.mon  .. f.time.day .. f.time.hour .. f.time.min .. f.time.sec
+		
+			return s
+
+		end
+	end
+	-- app.d.log( "app.batFilePath .. app.batFileName" , app.batFilePath .. app.batFileName , "readBatteryFile()" )
+
+	s	=	getFileTime(	app.batFilePath .. app.batFileName ) ..
+								getFileTime( app.cbmFilePath .. app.cbmFileName )
+									
+	-- app.d.log( "batFilesModifyTime",s , "flyData.getBatFilesModifyTime()" )
+	return s
+end
+
+function flyData.readBatteryFile()
+
+	-- app.d.log( "app.batFilePath .. app.batFileName" , app.batFilePath .. app.batFileName , "readBatteryFile()" )
+	-- ReRead the battery files, when changed after the last read.
+	
+	fdt = flyData.getBatFilesModifyTime()
+	if fdt == batFilesModifyTime then
+		-- app.d.log( "fdt" ,fdt  , "readBatteryFile()" )
+		-- app.d.log( "batFilesModifyTime" ,batFilesModifyTime  , "readBatteryFile()" )
+		return
+	end
+
+	-- Check batFile exists	:: If not, create an empty
+	if fstat( app.batFilePath .. app.batFileName ) == nil then
+	
+		f=io.open( app.batFilePath .. app.batFileName ,"a")
+		
+		io.write( f , "id,maxCapacity,product,cells,maxVolt,earlyCount,count,firstStartDate,retireDate,lastStartDate,capacity" .. "\n"  )
+		io.close( f )
+	end
+	
+	-- app.d.log( "Reread" , fdt , "readBatteryFile()" )
+	
+	--	Mező típus definiciók, üres állomány esetén különösen fontos.
+	-- 	1=Numeric , 2=String
+	batFile.setFieldDataType( 1, 2 )			-- id
+	batFile.setFieldDataType( 2, 1 )			-- maxCapacity
+	batFile.setFieldDataType( 3, 2 )			-- product
+	batFile.setFieldDataType( 4, 1 )			-- cells
+	batFile.setFieldDataType( 5, 1 )			-- maxVolt
+	batFile.setFieldDataType( 6, 1 )			-- earlyCount
+	batFile.setFieldDataType( 7, 1 )			-- count
+	batFile.setFieldDataType( 8, 2 )			-- firstStartDate
+	batFile.setFieldDataType( 9, 2 )			-- retireDate
+	batFile.setFieldDataType(10, 2 )			-- lastStartDate
+	batFile.setFieldDataType(11, 1 )			-- capacity	
+
+	batFile.readCsv( app.batFilePath .. app.batFileName )
+	
+	-- Connect Battery Model -> read settings
+	local cbm
+	
+	cbm = loadScript( app.dir .. "cbm.lua"   , "tbd" )( app )	
+	cbm.load(	app.dir .. "/csvfile.lua" , 
+					app.cbmFilePath .. app.cbmFileName )
+
+	flyData.cbmData = cbm.getData()
+
+	batFilesModifyTime = fdt
+end
+
+function flyData.isBatModelConnected( batID , modelName )
+	local is = false
+	
+	-- app.d.printAssoc( "isBatModelConnected::flyData.cbmData" , flyData.cbmData )
+	
+	if flyData.cbmData[batID] ~= nil then
+		if flyData.cbmData[batID][modelName]	~= nil then
+			is = true
+		end
+	end
+	
+	return is
 end
 
 function flyData.getBatteryTable()
