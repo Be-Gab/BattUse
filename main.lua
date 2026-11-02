@@ -3,7 +3,7 @@
 ##                BattUse - main                                         ##
 ##                                                                       ##
 ## Author: BeGab                                                         ##
-## Date:    2026-04-01                                                   ##
+## Date:    2026-11-02                                                   ##
 ## Version: 1.0.0 RC1                                                    ## 
 ## URL   : https://github.com/Be-Gab/BattUse                             ##
 ##                                                                       ##
