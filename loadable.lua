@@ -300,20 +300,20 @@ function isErrorInInputs()
 		-- Timer : legyen kiválasztva!  Legyen visszaszámoló! Default = 0
 		
 	if settings.getTimer() < 0 then
-		app.d.log( "settings.getTimer()", settings.getTimer() , "isErrorInInputs()" )
+		-- app.d.log( "settings.getTimer()", settings.getTimer() , "isErrorInInputs()" )
 		return true
 	else
 		local mt = model.getTimer( settings.getTimer() )
 		-- Start from 0, mean not countdown.
 		if mt.start == 0 then
-			app.d.log( "mt.start", mt.start , "isErrorInInputs()" )
+			-- app.d.log( "mt.start", mt.start , "isErrorInInputs()" )
 			return true
 		end
 	end
 	
 	-- BatCell is default = 0, have to set it.
 	if settings.getBatCell( ) == 0 then
-		app.d.log( "settings.getBatCell( )", settings.getBatCell() , "isErrorInInputs()" )
+		-- app.d.log( "settings.getBatCell( )", settings.getBatCell() , "isErrorInInputs()" )
 		return true
 	end
 	
@@ -390,7 +390,7 @@ function widget.pageHead( screenType, subUi, widget, options )
 	local headHeight = PAGE_HEAD_HEIGH 
 	local btnHeigh = headHeight - ( 16  * lvgl.LCD_SCALE )
 	local picWidth = headHeight
-	local titleWidth = 120 * lvgl.LCD_SCALE
+	local titleWidth = 146 * lvgl.LCD_SCALE -- 120
 	local headButtons, iconFile, subTitle
 	local title = "BattUse"
 	
@@ -480,7 +480,7 @@ function widget.pageHead( screenType, subUi, widget, options )
 										w = zw, --widget.zone.w , 
 										h = headHeight ,
 										children =	{
-											{	type = "box" , -- id = "pic" ,
+											{	type = "box" , -- id = "pic" , box
 												x = 0, 
 												y = 0 ,
 												w = picWidth , 
@@ -494,21 +494,37 @@ function widget.pageHead( screenType, subUi, widget, options )
 												}
 											} -- pic
 											,
-											{	type = "box" , -- id = "title" ,
-												flexFlow = lvgl.FLOW_COLUMN , 
-												flexPad =  0 , 
+											{	type = "box" , -- id = "title" , box
+												-- thickness = 2 , color = RED ,
 												scrollBar = false, scrollDir = 0,
-												x = picWidth , 
+												x = picWidth + 2 , 
 												y = 0 ,
 												w = titleWidth , 
 												h = headHeight ,
 												children = {
 													{	type = "label" ,
+														align = LEFT,
 														text = title ,
 														color = COLOR_THEME_PRIMARY2,
 													}
 													,
+													{	type	= "label" ,
+														align = RIGHT,
+														w		= titleWidth , 
+														text	= app.version .. "  ",
+														color	=	function ()
+																		if string.find( app.version , "RC" ) == 0 then;
+																			return COLOR_THEME_PRIMARY2;
+																		else;
+																			return COLOR_THEME_WARNING;
+																		end;
+																	end,
+														font	= SMLSIZE , 
+													}
+													,
 													{	type = "label" ,
+														y		= headHeight / 2,
+														align = LEFT,
 														text = subTitle ,
 														color = COLOR_THEME_PRIMARY2,
 														font	= SMLSIZE , 

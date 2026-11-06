@@ -727,7 +727,7 @@ function dispBatteryPercent( widget )			-- Battery Status
 	-- app.d.log( "widget.zone.h" , widget.zone.h, "dispBatteryPercent()" )
 	-- app.d.log( "flyData.fontSize( widget.zone.h )" , flyData.fontSize( widget.zone.h ) , "dispBatteryPercent()" )
 	
-	app.d.printAssoc( ".widget " , widget, "dispBatteryPercent()" )
+	-- app.d.printAssoc( "dispBatteryPercent()  - .widget " , widget )
 
 	if widget.isTopBar then	-- 40 !
 
