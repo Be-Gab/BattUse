@@ -1132,3 +1132,25 @@ function dispError( widget )
 
 end
 
+function dispApp( widget )
+
+	lvgl.clear()
+
+   widget.ui = lvgl.build({
+		{	type	= "box", 
+			w		= widget.zone.w ,
+			h		= widget.zone.h ,
+			align	= CENTER, 
+			children = {
+				{	type	= "label", 
+					w		= widget.zone.w , 
+					align	= CENTER + VCENTER, 
+					font	= SMLSIZE,
+					color	= COLOR_THEME_WARNING ,
+					text	=	"This is AppMode"					
+				}	
+			}
+		}
+	});
+
+end

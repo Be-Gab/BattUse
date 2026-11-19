@@ -344,7 +344,8 @@ function widget.update( widget, options )
 		if isErrorInInputs() then
 			widget.switchPage( PAGE_SETINPUT , widget, options )
 		else
-			widget.switchPage( PAGE_BATSELECT , widget, options )
+			--	widget.switchPage( PAGE_BATSELECT , widget, options )
+			dispApp( widget )
 		end
 	else
 	
@@ -1426,7 +1427,7 @@ function widget.widgetPage( widget, options )
 	elseif options.Display == 9 then				--	Quick Selector
 		dispQuickSelect( widget )		
 		
-	elseif options.Display == 10 then				--	Remaining charge (mAh Percent)
+	elseif options.Display == 10 then			--	Remaining charge (mAh Percent)
 		dispMahPercent( widget )		
 
 	end	
