@@ -340,14 +340,21 @@ function widget.update( widget, options )
 	
 	-- app.d.log( "update() .w", widget.zone.w , "widget.update( widget, options )" )
 	
-   if (lvgl.isFullScreen() or lvgl.isAppMode()) then
+   if  lvgl.isAppMode() then
 		if isErrorInInputs() then
 			widget.switchPage( PAGE_SETINPUT , widget, options )
 		else
 			--	widget.switchPage( PAGE_BATSELECT , widget, options )
 			dispApp( widget )
 		end
-	else
+		
+   elseif lvgl.isFullScreen() then
+		if isErrorInInputs() then
+			widget.switchPage( PAGE_SETINPUT , widget, options )
+		else
+			--	widget.switchPage( PAGE_BATSELECT , widget, options )
+			dispFullScr( widget )
+		end	else
 	
 		if isErrorInInputs() then
 			app.d.log( "update() ", "isError found!" , "widget.update( widget, options )" )
