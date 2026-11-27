@@ -49,6 +49,7 @@ local options =	{
 																	"Peak current"	,				-- MAX Amp
 																	"Quick Selector"	,
 																	"Remaining charge"	,		-- mAh Percent : % Line
+																	"Full Screen"	,				-- FullScreen
 																} 
 							}
 						}

@@ -348,13 +348,14 @@ function widget.update( widget, options )
 			dispApp( widget )
 		end
 		
-   elseif lvgl.isFullScreen() then
-		if isErrorInInputs() then
-			widget.switchPage( PAGE_SETINPUT , widget, options )
-		else
-			--	widget.switchPage( PAGE_BATSELECT , widget, options )
-			dispFullScr( widget )
-		end	else
+   else     -- if lvgl.isFullScreen() then
+	
+		-- if isErrorInInputs() then
+			-- widget.switchPage( PAGE_SETINPUT , widget, options )
+		-- else
+				widget.switchPage( PAGE_BATSELECT , widget, options )
+			-- dispFullScr( widget )
+		-- end	else
 	
 		if isErrorInInputs() then
 			app.d.log( "update() ", "isError found!" , "widget.update( widget, options )" )
@@ -1436,6 +1437,9 @@ function widget.widgetPage( widget, options )
 		
 	elseif options.Display == 10 then			--	Remaining charge (mAh Percent)
 		dispMahPercent( widget )		
+
+	elseif options.Display == 11 then			--	FullScr
+		dispFullScr( widget )		
 
 	end	
 	

@@ -1147,8 +1147,14 @@ function dispApp( widget )
 					align	= CENTER + VCENTER, 
 					font	= SMLSIZE,
 					color	= COLOR_THEME_WARNING ,
-					text	=	"This is AppMode"					
-				}	
+					text	=	"This is AppMode new"					
+				},
+				{	type = "button" , x = 10, y = 10, h=50,w=150,
+					text = "APP Test Btn",
+					press=	function()
+									app.d.log( "Press." , 11 , "dispApp()" );
+								end
+				} ,				
 			}
 		}
 	});
@@ -1157,12 +1163,15 @@ end
 
 function dispFullScr( widget )
 
+	-- TODO: ha nincs teljes képernyőn ( FM, Trim, Sliders..., TopMenü) tartalom helyett figyelmeztetés
+
 	lvgl.clear()
 
    widget.ui = lvgl.build({
 		{	type	= "box", 
 			w		= widget.zone.w ,
 			h		= widget.zone.h ,
+			flexFlow = lvgl.FLOW_COLUMN,
 			align	= CENTER, 
 			children = {
 				{	type	= "label", 
@@ -1170,7 +1179,20 @@ function dispFullScr( widget )
 					align	= CENTER + VCENTER, 
 					font	= SMLSIZE,
 					color	= COLOR_THEME_WARNING ,
-					text	=	"This is dispFullScr"					
+					text	=	"This is dispFullScr II"					
+				}	,
+				{	type = "button" , x = 10, y = 10, h=50,w=150,
+					text = "Test Btn",
+					press=	function()
+									app.d.log( "Press." , 1 , "dispFullScr()" );
+								end
+				} ,
+				{	type	= "label", 
+					w		= widget.zone.w , 
+					align	= CENTER + VCENTER, 
+					font	= SMLSIZE,
+					color	= COLOR_THEME_WARNING ,
+					text	=	"This is                     -     dispFullScr II"					
 				}	
 			}
 		}
